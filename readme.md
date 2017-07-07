@@ -21,3 +21,6 @@ applied mappings are in associated jsonb documents
 
 ## Difficulties
 Non standard file formats will require additional logic
+example: PNC loan balance and collateral CSV files
+1. External:    Anything not in CSV should be converted external to Postgres and then imported as CSV
+2. Direct:      Outside logic can be setup to push new records to tps.trans direct from non-csv fornmated sources or fdw sources
