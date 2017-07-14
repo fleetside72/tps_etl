@@ -24,3 +24,9 @@ Non standard file formats will require additional logic
 example: PNC loan balance and collateral CSV files
 1. External:    Anything not in CSV should be converted external to Postgres and then imported as CSV
 2. Direct:      Outside logic can be setup to push new records to tps.trans direct from non-csv fornmated sources or fdw sources
+
+## Interface
+maybe start out in excel until it gets firmed up
+* list existing mappings
+    * apply mappings to see what results come back
+* experiment with new mappings
