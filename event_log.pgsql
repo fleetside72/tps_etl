@@ -21,9 +21,13 @@ FROM
     x
     JOIN LATERAL jsonb_to_recordset(x.j->'item') rs(item text, amount numeric) ON TRUE
 )
-select
-	*
-from
+SELECT
+	item.*,
+    acct.*,
+    r.*
+FROM
 	item
     INNER JOIN acct ON
     	acct.rn = item.rn
+    CROSS JOIN x
+    JOIN LATERAL jsonb_to_record(x.j) r(vendor text, "date" date, instrument text) ON TRUE
