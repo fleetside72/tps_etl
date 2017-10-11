@@ -65,7 +65,7 @@ begin
 ----------------------------------------------------add create table verbage in front of column list--------------------------------------------------------
 
     _t := format('CREATE TEMP TABLE csv_i (%s)', _t);
-    --raise notice '%', _t;
+    raise notice '%', _t;
     
 
 ----------------------------------------------------build the table-----------------------------------------------------------------------------------------
@@ -77,4 +77,8 @@ begin
 end
 $$;
 
-SELECT * FROM csv_i;
+--SELECT * FROM csv_i;
+
+COPY csv_i FROM 'C:\Users\ptrowbridge\downloads\transsearchcsv.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
+
+SELECT row_to_json(csv_i) FROM csv_i;
