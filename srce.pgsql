@@ -59,6 +59,8 @@ begin
         TPS.srce
         --unwrap the schema definition array
         LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
+    WHERE   
+        srce = 'PNCO'
     GROUP BY
         srce;
         
@@ -79,6 +81,9 @@ $$;
 
 --SELECT * FROM csv_i;
 
-COPY csv_i FROM 'C:\Users\ptrowbridge\downloads\transsearchcsv.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
+COPY csv_i FROM 'C:\Users\ptrowbridge\Documents\OneDrive - The HC Companies, Inc\Cash\build_hist\full_dl\15Q1bal.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
 
-SELECT row_to_json(csv_i) FROM csv_i;
+INSERT INTO
+    tps.trans (srce, rec)
+SELECT 
+    'PNCO', row_to_json(csv_i) FROM csv_i;
