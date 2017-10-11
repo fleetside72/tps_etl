@@ -49,6 +49,8 @@ declare _t text;
 
 begin
 	
+----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
+
 	SELECT
         string_agg(quote_ident(prs.key)||' '||prs.type,',')
     INTO
@@ -60,10 +62,14 @@ begin
     GROUP BY
         srce;
         
-    raise notice '%', _t;
+----------------------------------------------------add create table verbage in front of column list--------------------------------------------------------
+
     _t := format('CREATE TEMP TABLE csv_i (%s)', _t);
-    raise notice '%', _t;
+    --raise notice '%', _t;
     
+
+----------------------------------------------------build the table-----------------------------------------------------------------------------------------
+
     DROP TABLE IF EXISTS csv_i;
     
     EXECUTE _t;
