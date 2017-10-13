@@ -15,7 +15,7 @@ begin
         --unwrap the schema definition array
         LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
     WHERE   
-        srce = 'PNCO'
+        srce = 'PNCL'
     GROUP BY
         srce;
         
@@ -31,14 +31,31 @@ begin
     
     EXECUTE _t;
 
+    COPY csv_i FROM 'C:\Users\ptrowbridge\Documents\OneDrive - The HC Companies, Inc\Cash\build_hist\pncl.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
+
 end
 $$;
 
---SELECT * FROM csv_i;
+--SELECT row_to_json(csv_i) FROM csv_i;
 
-COPY csv_i FROM 'C:\Users\ptrowbridge\Documents\OneDrive - The HC Companies, Inc\Cash\build_hist\full_dl\15Q1bal.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
-
+/*
 INSERT INTO
     tps.trans (srce, rec)
 SELECT 
     'PNCO', row_to_json(csv_i) FROM csv_i;
+*/
+
+
+SELECT
+    (row_to_json(i)::jsonb) #> ae.e::text[],
+    srce,
+    defn->'unique_constraint'->'type',
+    defn->'unique_constraint'->'fields',
+    ae.e,
+    ae.rn
+FROM
+    csv_i i
+    INNER JOIN tps.srce s ON
+        s.srce = 'PNCL'
+    LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
+LIMIT 10
