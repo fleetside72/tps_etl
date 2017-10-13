@@ -1,47 +1,3 @@
-/*
-SELECT
-jsonb_pretty(
-$$
-{
-    "name": "GOOGDM",
-    "type": "json_csv",
-    "schema": {
-        "rows": [
-            {
-                "elements": [
-                    {
-                        "status": "text",
-                        "distance": {
-                            "text": "text",
-                            "value": "numeric"
-                        },
-                        "duration": {
-                            "text": "text",
-                            "value": "value"
-                       }
-                    }
-                ]
-            }
-        ],
-        "status": "text",
-        "origin_addresses": [
-            "text"
-        ],
-        "destination_addresses": [
-            "text"
-        ]
-    },
-    "unique_constraint": {
-        "type": "key",
-        "fields": [
-            "{origin_adresses,0}",
-            "{destination_adresses,0}"
-        ]
-    }
-}
-$$::jsonb
-)
-*/
 
 DO $$
 
@@ -59,13 +15,15 @@ begin
         TPS.srce
         --unwrap the schema definition array
         LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
+    WHERE   
+        srce = 'DCARD'
     GROUP BY
         srce;
         
 ----------------------------------------------------add create table verbage in front of column list--------------------------------------------------------
 
     _t := format('CREATE TEMP TABLE csv_i (%s)', _t);
-    --raise notice '%', _t;
+    raise notice '%', _t;
     
 
 ----------------------------------------------------build the table-----------------------------------------------------------------------------------------
@@ -74,7 +32,19 @@ begin
     
     EXECUTE _t;
 
+    COPY csv_i FROM 'C:\Users\fleet\downloads\dc.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
+
+
 end
 $$;
 
 SELECT * FROM csv_i;
+
+
+
+/*
+INSERT INTO
+    tps.trans (srce, rec)
+SELECT 
+    'DCARD', row_to_json(csv_i) FROM csv_i;
+*/
