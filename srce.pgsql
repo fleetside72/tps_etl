@@ -25,35 +25,36 @@ begin
         
 ----------------------------------------------------add create table verbage in front of column list--------------------------------------------------------
 
-    _t := format('CREATE TEMP TABLE csv_i (%s)', _t);
-    raise notice '%', _t;
-    raise notice '%', _c;
-    
-
-----------------------------------------------------build the table-----------------------------------------------------------------------------------------
+    _t := format('CREATE TEMP TABLE csv_i (%s, id SERIAL)', _t);
+    --RAISE NOTICE '%', _t;
+    --RAISE NOTICE '%', _c;
 
     DROP TABLE IF EXISTS csv_i;
     
     EXECUTE _t;
 
-    ALTER TABLE csv_i ADD COLUMN id SERIAL;
+----------------------------------------------------do the insert-------------------------------------------------------------------------------------------
 
     --the column list needs to be dynamic forcing this whole line to be dynamic
-    COPY csv_i ("Trans. Date","Post Date","Description","Amount","Category")FROM 'C:\Users\fleet\downloads\dc.csv' WITH (HEADER TRUE,DELIMITER ',', FORMAT CSV, ENCODING 'SQL_ASCII',QUOTE '"');
+    _t := format('COPY csv_i (%s) FROM ''C:\Users\fleet\downloads\dc.csv'' WITH (HEADER TRUE,DELIMITER '','', FORMAT CSV, ENCODING ''SQL_ASCII'',QUOTE ''"'');',_c);
+
+    --RAISE NOTICE '%', _t;
+
+    EXECUTE _t;
 
 
 end
 $$;
 
---SELECT * FROM csv_i;
-
+--this needs to aggregate on id sequence
 SELECT
     jsonb_build_object(
             (ae.e::text[])[1],                                  --the key name
             (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
     ) json_key,
     srce,
-    ae.rn
+    ae.rn,
+    id
 FROM
     csv_i i
     INNER JOIN tps.srce s ON
