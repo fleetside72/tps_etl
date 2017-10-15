@@ -1,10 +1,10 @@
 
 DO $$
 
-declare _t text;
-declare _c text;
+DECLARE _t text;
+DECLARE _c text;
 
-begin
+BEGIN
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
@@ -43,10 +43,12 @@ begin
     EXECUTE _t;
 
 
-end
+END
 $$;
 
+--*******************************************
 --this needs to aggregate on id sequence
+--*******************************************
 SELECT
     jsonb_build_object(
             (ae.e::text[])[1],                                  --the key name
@@ -60,10 +62,3 @@ FROM
     INNER JOIN tps.srce s ON
         s.srce = 'DCARD'
     LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE;
-
-/*
-INSERT INTO
-    tps.trans (srce, rec)
-SELECT 
-    'DCARD', row_to_json(csv_i) FROM csv_i;
-*/
