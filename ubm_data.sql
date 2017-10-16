@@ -30,7 +30,7 @@ SET search_path = tps, pg_catalog;
 --
 
 INSERT INTO srce (srce, defn) VALUES ('PNCC', '{"name": "PNCC", "type": "csv", "schema": [{"key": "AsOfDate", "type": "date"}, {"key": "BankId", "type": "text"}, {"key": "AccountNumber", "type": "text"}, {"key": "AccountName", "type": "text"}, {"key": "BaiControl", "type": "text"}, {"key": "Currency", "type": "text"}, {"key": "Transaction", "type": "text"}, {"key": "Reference", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "AdditionalRemittance", "type": "text"}], "unique_constraint": {"type": "range", "fields": ["{AsOfDate}"]}}');
-INSERT INTO srce (srce, defn) VALUES ('DCARD', '{"name": "DCARD", "type": "csv", "schema": [{"key": "Trans. Date", "type": "date"}, {"key": "Post Date", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Category", "type": "text"}], "unique_constraint": {"type": "key", "fields": ["{Post Date}"]}}');
+INSERT INTO srce (srce, defn) VALUES ('DCARD', '{"name": "DCARD", "type": "csv", "schema": [{"key": "Trans. Date", "type": "date"}, {"key": "Post Date", "type": "date"}, {"key": "Description", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Category", "type": "text"}], "unique_constraint": {"type": "key", "fields": ["{Post Date}","{Trans. Date}"]}}');
 
 
 --
