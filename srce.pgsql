@@ -50,15 +50,21 @@ $$;
 --this needs to aggregate on id sequence
 --*******************************************
 SELECT
-    jsonb_build_object(
+    ---creates a key value pair and then aggregates rows of key value pairs
+    jsonb_object_agg(
             (ae.e::text[])[1],                                  --the key name
             (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
     ) json_key,
     srce,
-    ae.rn,
+    --ae.rn,
     id
 FROM
     csv_i i
     INNER JOIN tps.srce s ON
         s.srce = 'DCARD'
-    LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE;
+    LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
+GROUP BY
+    srce,
+    id
+ORDER BY    
+    id
