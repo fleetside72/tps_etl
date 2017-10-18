@@ -1,4 +1,3 @@
-
 DO $$
 
 DECLARE _t text;
@@ -50,38 +49,59 @@ $$;
 --this needs to aggregate on id sequence
 --*******************************************
 WITH pending_list AS (
-SELECT
-    ---creates a key value pair and then aggregates rows of key value pairs
-    jsonb_object_agg(
-            (ae.e::text[])[1],                                  --the key name
-            (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
-    ) json_key,
-    row_to_json(i) rec,
-    srce,
-    --ae.rn,
-    id
-FROM
-    csv_i i
-    INNER JOIN tps.srce s ON
-        s.srce = 'DCARD'
-    LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
-GROUP BY
-    i.*,
-    srce,
-    id
-ORDER BY    
-    id
+    SELECT
+        ---creates a key value pair and then aggregates rows of key value pairs
+        jsonb_object_agg(
+                (ae.e::text[])[1],                                  --the key name
+                (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
+        ) json_key,
+        row_to_json(i)::JSONB rec,
+        srce,
+        --ae.rn,
+        id
+    FROM
+        csv_i i
+        INNER JOIN tps.srce s ON
+            s.srce = 'DCARD'
+        LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
+    GROUP BY
+        i.*,
+        srce,
+        id
+    ORDER BY    
+        id
 )
-, matched_tps AS (
-SELECT
-    *
-FROM 
-    pending_list pl
-    INNER JOIN tps.trans t ON
-        t.srce = pl.srce
-        AND t.rec @> pl.json_key
+------results of an insert operation--------------
+, inserted AS (
+    INSERT INTO
+        tps.trans (srce, rec)
+    SELECT
+        pl.srce
+        ,pl.rec
+    FROM 
+        pending_list pl
+        LEFT JOIN tps.trans t ON
+            t.srce = pl.srce
+            AND t.rec @> pl.json_key
+        WHERE
+            t IS NULL
+    ----this conflict is only if an exact duplicate rec json happens, which will be rejected
+    ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
+    ON CONFLICT ON CONSTRAINT uc_rec DO NOTHING
+    RETURNING *
 )
-SELECT * FROM matched_tps;
 
--- need to compare against and tps matches
--- therefore need to apply keyset to tps rows
+----records not inserted------
+SELECT
+    srce
+    ,rec
+FROM
+    pending_list
+
+EXCEPT ALL
+
+SELECT 
+    srce
+    ,rec
+FROM 
+    inserted;
