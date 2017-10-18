@@ -35,7 +35,7 @@ BEGIN
 ----------------------------------------------------do the insert-------------------------------------------------------------------------------------------
 
     --the column list needs to be dynamic forcing this whole line to be dynamic
-    _t := format('COPY csv_i (%s) FROM ''C:\Users\fleet\downloads\dc.csv'' WITH (HEADER TRUE,DELIMITER '','', FORMAT CSV, ENCODING ''SQL_ASCII'',QUOTE ''"'');',_c);
+    _t := format('COPY csv_i (%s) FROM ''C:\Users\fleet\downloads\dfs.csv'' WITH (HEADER TRUE,DELIMITER '','', FORMAT CSV, ENCODING ''SQL_ASCII'',QUOTE ''"'');',_c);
 
     --RAISE NOTICE '%', _t;
 
@@ -55,7 +55,7 @@ WITH pending_list AS (
                 (ae.e::text[])[1],                                  --the key name
                 (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
         ) json_key,
-        row_to_json(i)::JSONB rec,
+        row_to_json(i)::JSONB - 'id' rec,
         srce,
         --ae.rn,
         id
@@ -87,7 +87,6 @@ WITH pending_list AS (
             t IS NULL
     ----this conflict is only if an exact duplicate rec json happens, which will be rejected
     ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
-    ON CONFLICT ON CONSTRAINT uc_rec DO NOTHING
     RETURNING *
 )
 
