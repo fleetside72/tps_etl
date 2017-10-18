@@ -89,18 +89,34 @@ WITH pending_list AS (
     ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
     RETURNING *
 )
+---------raw list of records not inserted----------
+, not_inserted AS (
+    SELECT
+        srce
+        ,rec
+    FROM
+        pending_list
 
-----records not inserted------
+    EXCEPT ALL
+
+    SELECT 
+        srce
+        ,rec
+    FROM 
+        inserted
+)
+--------summarize records not inserted------------------
 SELECT
-    srce
-    ,rec
+    t.srce
+    ,(ae.e::text[])[1] unq_constr
+    ,MIN(rec #>> ae.e::text[]) min_text
+    ,MAX(rec #>> ae.e::text[]) max_text
+    ,JSONB_PRETTY(JSON_AGG(rec #> ae.e::text[] ORDER BY rec #>> ae.e::text[])::JSONB)
 FROM
-    pending_list
-
-EXCEPT ALL
-
-SELECT 
-    srce
-    ,rec
-FROM 
-    inserted;
+    not_inserted t
+    INNER JOIN tps.srce s ON
+        s.srce = t.srce
+    LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
+GROUP BY
+    t.srce
+    ,(ae.e::text[])[1];
