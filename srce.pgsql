@@ -55,11 +55,7 @@ WITH pending_list AS (
                 (ae.e::text[])[1],                                  --the key name
                 (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
         ) json_key,
-<<<<<<< HEAD
-        row_to_json(i)::JSONB rec,
-=======
         row_to_json(i)::JSONB - 'id' rec,
->>>>>>> c9
         srce,
         --ae.rn,
         id
@@ -91,10 +87,6 @@ WITH pending_list AS (
             t IS NULL
     ----this conflict is only if an exact duplicate rec json happens, which will be rejected
     ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
-<<<<<<< HEAD
-    ON CONFLICT ON CONSTRAINT uc_rec DO NOTHING
-=======
->>>>>>> c9
     RETURNING *
 )
 
