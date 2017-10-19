@@ -165,6 +165,13 @@ ALTER TABLE ONLY trans
 
 
 --
+-- Name: trans_rec; Type: INDEX; Schema: tps; Owner: -
+--
+
+CREATE INDEX trans_rec ON trans USING gin (rec);
+
+
+--
 -- Name: trans trans_srce_fkey; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 
