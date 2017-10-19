@@ -19,7 +19,8 @@ SELECT
             ELSE array_to_json(mt.mt) 
         END
     ) retval,
-    m.seq
+    m.seq,
+    e.v->>'retain' retain
 FROM 
     tps.map_rm m
     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
@@ -48,7 +49,8 @@ agg_rx AS (
         rx.id, 
         tps.jsonb_concat_obj(rx.rkey) rkey,
         tps.jsonb_concat_obj(rx.retval) AS retval,
-        rx.seq
+        tps.jsonb_concat_obj(CASE rx.retain WHEN 'y' THEN rx.retval ELSE '{}'::jsonb END) retain,
+        rx.seq        
     FROM 
         --unwrap json instruction and apply regex using a count per original line for re-aggregation
         --need to look at integrating regex option like 'g' that would then need aggegated back as an array, or adding the ordinality number to the title
@@ -63,13 +65,13 @@ agg_rx AS (
 
 -------------aggregate all targets back to row level (id)------------------------------------------------------------------------------------------------
 
-
     SELECT 
         u.srce,
         u.id,
         string_agg(u.target,',') target,
         jsonb_pretty(tps.jsonb_concat_obj(coalesce(v.map,'{}'::jsonb) ORDER BY seq )) map,
-        jsonb_pretty(tps.jsonb_concat_obj(u.retval||coalesce(v.map,'{}'::jsonb) ORDER BY seq)) comb
+        jsonb_pretty(tps.jsonb_concat_obj(u.retval||coalesce(v.map,'{}'::jsonb) ORDER BY seq)) comb,
+        jsonb_pretty(tps.jsonb_concat_obj(u.retain||coalesce(v.map,'{}'::jsonb) ORDER BY seq)) retain
     FROM 	
         --re-aggregate return values and explude any records where one or more regex failed with a null result
         agg_rx u
