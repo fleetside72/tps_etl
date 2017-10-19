@@ -119,6 +119,32 @@ CREATE TYPE srce_defn_schema AS (
 );
 
 
+--
+-- Name: jsonb_concat(jsonb, jsonb); Type: FUNCTION; Schema: tps; Owner: -
+--
+
+CREATE FUNCTION jsonb_concat(state jsonb, concat jsonb) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	--RAISE notice 'state is %', state;
+	--RAISE notice 'concat is %', concat;
+	RETURN state || concat;
+END;
+$$;
+
+
+--
+-- Name: jsonb_concat_obj(jsonb); Type: AGGREGATE; Schema: tps; Owner: -
+--
+
+CREATE AGGREGATE jsonb_concat_obj(jsonb) (
+    SFUNC = jsonb_concat,
+    STYPE = jsonb,
+    INITCOND = '{}'
+);
+
+
 SET search_path = evt, pg_catalog;
 
 SET default_tablespace = '';
@@ -158,7 +184,7 @@ SET search_path = tps, pg_catalog;
 CREATE TABLE map_rm (
     srce text NOT NULL,
     target text NOT NULL,
-    regex text,
+    regex jsonb,
     seq integer NOT NULL
 );
 
@@ -228,7 +254,7 @@ SET search_path = tps, pg_catalog;
 --
 
 ALTER TABLE ONLY map_rm
-    ADD CONSTRAINT map_rm_pk PRIMARY KEY (srce, target, seq);
+    ADD CONSTRAINT map_rm_pk PRIMARY KEY (srce, target);
 
 
 --
@@ -271,11 +297,11 @@ ALTER TABLE ONLY map_rm
 
 
 --
--- Name: map_rv map_rv_fk_srce; Type: FK CONSTRAINT; Schema: tps; Owner: -
+-- Name: map_rv map_rv_fk_rm; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 
 ALTER TABLE ONLY map_rv
-    ADD CONSTRAINT map_rv_fk_srce FOREIGN KEY (srce) REFERENCES srce(srce);
+    ADD CONSTRAINT map_rv_fk_rm FOREIGN KEY (srce, target) REFERENCES map_rm(srce, target);
 
 
 --
