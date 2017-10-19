@@ -59,6 +59,33 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = tps, pg_catalog;
 
 --
+-- Name: dcard; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE dcard AS (
+	"Trans. Date" date,
+	"Post Date" date,
+	"Description" text,
+	"Amount" text,
+	"Category" text
+);
+
+
+--
+-- Name: hunt; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE hunt AS (
+	"Date" date,
+	"Reference Number" numeric,
+	"Payee Name" text,
+	"Memo" text,
+	"Amount" text,
+	"Category Name" text
+);
+
+
+--
 -- Name: srce_defn_schema; Type: TYPE; Schema: tps; Owner: -
 --
 
