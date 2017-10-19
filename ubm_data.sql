@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10beta4
--- Dumped by pg_dump version 10beta4
+-- Dumped from database version 10rc1
+-- Dumped by pg_dump version 10rc1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,7 +20,6 @@ SET search_path = evt, pg_catalog;
 -- Data for Name: log; Type: TABLE DATA; Schema: evt; Owner: -
 --
 
-INSERT INTO log (id, rec) VALUES (1, '{"date": "2017-08-20", "item": [{"item": "Green Chili", "amount": 1.49, "account": "food"}, {"item": "Black Beans", "amount": 1.6, "account": "food"}, {"item": "Distilled Water", "amount": 7.12, "account": "food"}, {"item": "Fruit Preservative", "amount": 3.99, "account": "food"}, {"item": "Watch Battery", "amount": 3.79, "account": "stuff"}, {"item": "Sales Tax", "amount": "0.26", "account": "taxes"}, {"item": "Green Chili", "amount": -1.49, "account": "dcard"}, {"item": "Black Beans", "amount": -1.6, "account": "dcard"}, {"item": "Distilled Water", "amount": -7.12, "account": "dcard"}, {"item": "Fruit Preservative", "amount": -3.99, "account": "dcard"}, {"item": "Watch Battery", "amount": -3.79, "account": "dcard"}, {"item": "Sales Tax", "amount": -0.26, "account": "dcard"}], "vendor": "Drug Mart", "instrument": "Discover Card"}');
 
 
 SET search_path = tps, pg_catalog;
@@ -29,13 +28,9 @@ SET search_path = tps, pg_catalog;
 -- Data for Name: srce; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
-INSERT INTO srce (srce, defn) VALUES ('PNCC', '{"name": "PNCC", "type": "csv", "schema": [{"key": "AsOfDate", "type": "date"}, {"key": "BankId", "type": "text"}, {"key": "AccountNumber", "type": "text"}, {"key": "AccountName", "type": "text"}, {"key": "BaiControl", "type": "text"}, {"key": "Currency", "type": "text"}, {"key": "Transaction", "type": "text"}, {"key": "Reference", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "AdditionalRemittance", "type": "text"}], "unique_constraint": {"type": "range", "fields": ["{AsOfDate}"]}}');
-INSERT INTO srce (srce, defn) VALUES ('DCARD', '{"name": "DCARD", "type": "csv", "schema": [{"key": "Trans. Date", "type": "date"}, {"key": "Post Date", "type": "date"}, {"key": "Description", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Category", "type": "text"}], "unique_constraint": {"type": "key", "fields": ["{Post Date}", "{Trans. Date}"]}}');
-
-
---
--- Data for Name: trans; Type: TABLE DATA; Schema: tps; Owner: -
---
+INSERT INTO srce (srce, defn) VALUES ('PNCC', '{"name": "PNCC", "type": "csv", "descr": "PNC Cash Accounts", "schema": [{"key": "AsOfDate", "type": "date"}, {"key": "BankId", "type": "text"}, {"key": "AccountNumber", "type": "text"}, {"key": "AccountName", "type": "text"}, {"key": "BaiControl", "type": "text"}, {"key": "Currency", "type": "text"}, {"key": "Transaction", "type": "text"}, {"key": "Reference", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "AdditionalRemittance", "type": "text"}], "unique_constraint": {"type": "range", "fields": ["{AsOfDate}"]}}');
+INSERT INTO srce (srce, defn) VALUES ('PNCO', '{"name": "PNCO", "type": "csv", "descr": "PNC Loan Ledger", "schema": [{"key": "Loan#", "type": "text"}, {"key": "Post Date", "type": "date"}, {"key": "Effective Date", "type": "date"}, {"key": "Reference #", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "Advances", "type": "numeric"}, {"key": "Adjustments", "type": "numeric"}, {"key": "Payments", "type": "numeric"}, {"key": "Loan Balance", "type": "numeric"}], "unique_constraint": {"type": "range", "fields": ["{Post Date}"]}}');
+INSERT INTO srce (srce, defn) VALUES ('PNCL', '{"name": "PNCO", "type": "csv", "descr": "PNC Loan Ledger", "schema": [{"key": "Schedule#", "type": "text"}, {"key": "PostDate", "type": "date"}, {"key": "Assn#", "type": "text"}, {"key": "Coll#", "type": "text"}, {"key": "AdvanceRate", "type": "numeric"}, {"key": "Sales", "type": "numeric"}, {"key": "Credits & Adjustments", "type": "numeric"}, {"key": "Gross Collections", "type": "numeric"}, {"key": "CollateralBalance", "type": "numeric"}, {"key": "MaxEligible", "type": "numeric"}, {"key": "Ineligible Amount", "type": "numeric"}, {"key": "Reserve Amount", "type": "numeric"}], "unique_constraint": {"type": "key", "fields": ["{Post Date}", "{Schedule#}"]}}');
 
 
 SET search_path = evt, pg_catalog;
@@ -44,7 +39,7 @@ SET search_path = evt, pg_catalog;
 -- Name: log_id_seq; Type: SEQUENCE SET; Schema: evt; Owner: -
 --
 
-SELECT pg_catalog.setval('log_id_seq', 1, true);
+SELECT pg_catalog.setval('log_id_seq', 1, false);
 
 
 SET search_path = tps, pg_catalog;
