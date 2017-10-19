@@ -12,3 +12,6 @@ FROM
 GROUP BY
     t.srce
     ,(ae.e::text[])[1]
+ORDER BY
+    t.srce
+    ,(ae.e::text[])[1]
