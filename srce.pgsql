@@ -1,3 +1,16 @@
+\timing
+
+/*--------------------------------------------------------
+0. load target import to temp table
+1. create pending list
+2. get unqiue pending keys
+3. see which keys not already in tps.trans
+4. insert pending records associated with keys that are not already in trans
+5. get list of recors not inserted
+6. summarize records not inserted
+*/---------------------------------------------------------
+
+
 DO $$
 
 DECLARE _t text;
@@ -45,17 +58,19 @@ BEGIN
 END
 $$;
 
---*******************************************
---this needs to aggregate on id sequence
---*******************************************
-WITH pending_list AS (
+
+WITH 
+
+-------------for each imported row in the COPY table, genereate the json rec, and a column for the json key specified in the srce.defn-----------
+
+pending_list AS (
     SELECT
         ---creates a key value pair and then aggregates rows of key value pairs
         jsonb_object_agg(
                 (ae.e::text[])[1],                                  --the key name
                 (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
         ) json_key,
-        row_to_json(i)::JSONB - 'id' rec,
+        row_to_json(i)::JSONB rec,
         srce,
         --ae.rn,
         id
@@ -69,9 +84,38 @@ WITH pending_list AS (
         srce,
         id
     ORDER BY    
-        id
+        id ASC
 )
-------results of an insert operation--------------
+
+-----------create a unique list of keys from staged rows------------------------------------------------------------------------------------------
+
+, pending_keys AS (
+    SELECT DISTINCT
+        json_key
+    FROM 
+        pending_list
+)
+
+-----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
+
+, unmatched_keys AS (
+SELECT
+    json_key
+FROM
+    pending_keys
+
+EXCEPT
+
+SELECT DISTINCT
+    k.json_key
+FROM
+    pending_keys k
+    INNER JOIN tps.trans t ON
+        t.rec @> k.json_key
+)
+
+-----------insert pending rows that have key with no trans match-----------------------------------------------------------------------------------
+
 , inserted AS (
     INSERT INTO
         tps.trans (srce, rec)
@@ -80,16 +124,17 @@ WITH pending_list AS (
         ,pl.rec
     FROM 
         pending_list pl
-        LEFT JOIN tps.trans t ON
-            t.srce = pl.srce
-            AND t.rec @> pl.json_key
-        WHERE
-            t IS NULL
+        INNER JOIN unmatched_keys u ON
+            u.json_key = pl.json_key
+    ORDER BY
+        pl.id ASC
     ----this conflict is only if an exact duplicate rec json happens, which will be rejected
     ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
     RETURNING *
 )
----------raw list of records not inserted----------
+
+-----------list of records not inserted--------------------------------------------------------------------------------------------------------------
+
 , not_inserted AS (
     SELECT
         srce
@@ -105,7 +150,9 @@ WITH pending_list AS (
     FROM 
         inserted
 )
---------summarize records not inserted------------------
+
+--------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
+
 SELECT
     t.srce
     ,(ae.e::text[])[1] unq_constr
