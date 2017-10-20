@@ -31,7 +31,8 @@ FROM
     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
     LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text) WITH ORDINALITY mt(mt, rn) ON true
 WHERE
-    t.srce = 'DCARD'     
+    t.map IS NULL
+    AND t.srce = 'DCARD'     
 ORDER BY 
     m.srce, 
     m.seq,
@@ -76,12 +77,12 @@ agg_rx AS (
         u.rec,
         string_agg(u.target,',') target,
         tps.jsonb_concat_obj(coalesce(v.map,'{}'::jsonb) ORDER BY seq ) map,
-        tps.jsonb_concat_obj(u.retval||coalesce(v.map,'{}'::jsonb) ORDER BY seq) comb,
+        --tps.jsonb_concat_obj(u.retval||coalesce(v.map,'{}'::jsonb) ORDER BY seq) comb,
         tps.jsonb_concat_obj(u.retain||coalesce(v.map,'{}'::jsonb) ORDER BY seq) retain
     FROM 	
         --re-aggregate return values and explude any records where one or more regex failed with a null result
         agg_rx u
-        LEFT OUTER JOIN tps.map_rv v ON
+        INNER JOIN tps.map_rv v ON
             v.target = u.target AND
             v.srce = u.srce AND
             v.retval <@ u.retval
@@ -92,6 +93,18 @@ agg_rx AS (
 )
 
 
+--SELECT * FROM agg_orig
+--UPDATE tps.trans t SET (map) = (SELECT retain FROM agg_orig WHERE t.id = agg_orig.id);
+UPDATE
+    tps.trans t
+SET
+    map = o.retain
+FROM
+    agg_orig o
+WHERE
+    o.id = t.id
+
+/*
 SELECT
     retain->>'f20',
     rec->>'Description',
@@ -104,3 +117,4 @@ GROUP BY
 ORDER BY
     retain->>'f20',
     rec->>'Description'
+*/
