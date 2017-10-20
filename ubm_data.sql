@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10beta4
--- Dumped by pg_dump version 10beta4
+-- Dumped from database version 10rc1
+-- Dumped by pg_dump version 10rc1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,7 +20,6 @@ SET search_path = evt, pg_catalog;
 -- Data for Name: log; Type: TABLE DATA; Schema: evt; Owner: -
 --
 
-INSERT INTO log (id, rec) VALUES (1, '{"date": "2017-08-20", "item": [{"item": "Green Chili", "amount": 1.49, "account": "food"}, {"item": "Black Beans", "amount": 1.6, "account": "food"}, {"item": "Distilled Water", "amount": 7.12, "account": "food"}, {"item": "Fruit Preservative", "amount": 3.99, "account": "food"}, {"item": "Watch Battery", "amount": 3.79, "account": "stuff"}, {"item": "Sales Tax", "amount": "0.26", "account": "taxes"}, {"item": "Green Chili", "amount": -1.49, "account": "dcard"}, {"item": "Black Beans", "amount": -1.6, "account": "dcard"}, {"item": "Distilled Water", "amount": -7.12, "account": "dcard"}, {"item": "Fruit Preservative", "amount": -3.99, "account": "dcard"}, {"item": "Watch Battery", "amount": -3.79, "account": "dcard"}, {"item": "Sales Tax", "amount": -0.26, "account": "dcard"}], "vendor": "Drug Mart", "instrument": "Discover Card"}');
 
 
 SET search_path = tps, pg_catalog;
@@ -35,7 +34,7 @@ INSERT INTO srce (srce, defn) VALUES ('HUNT', '{"name": "HUNT", "type": "csv", "
 
 
 --
--- Data for Name: trans; Type: TABLE DATA; Schema: tps; Owner: -
+-- Data for Name: map_rm; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
 INSERT INTO trans (id, srce, rec, map) VALUES (2094, 'HUNT', '{"Date": "2017-08-07", "Memo": "SUBSTITUTE CHECK", "Amount": "-610.01", "Payee Name": "", "Category Name": "", "Reference Number": 1826}', NULL);
@@ -2683,7 +2682,7 @@ SET search_path = evt, pg_catalog;
 -- Name: log_id_seq; Type: SEQUENCE SET; Schema: evt; Owner: -
 --
 
-SELECT pg_catalog.setval('log_id_seq', 1, true);
+SELECT pg_catalog.setval('log_id_seq', 1, false);
 
 
 SET search_path = tps, pg_catalog;
