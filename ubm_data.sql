@@ -147,6 +147,12 @@ INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'ACH Debits', '{"
 INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'ACH Debits', '{"ini": "ACH DEBIT RECEIVED", "desc": " DBI COBRA", "compn": " DBI COBRA"}', '{"party": "ADP", "reason": "Payroll Direct Deposit"}');
 
 
+--
+-- Data for Name: trans_log; Type: TABLE DATA; Schema: tps; Owner: -
+--
+
+
+
 SET search_path = evt, pg_catalog;
 
 --
@@ -162,7 +168,14 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 1543757, true);
+SELECT pg_catalog.setval('trans_id_seq', 1544069, true);
+
+
+--
+-- Name: trans_log_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
+--
+
+SELECT pg_catalog.setval('trans_log_id_seq', 1, false);
 
 
 --
