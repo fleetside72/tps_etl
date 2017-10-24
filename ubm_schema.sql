@@ -119,6 +119,30 @@ CREATE TYPE srce_defn_schema AS (
 );
 
 
+SET search_path = public, pg_catalog;
+
+--
+-- Name: jsonb_extract(jsonb, text[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	t text;
+	j jsonb := '{}'::jsonb;
+	
+BEGIN
+	FOREACH t IN ARRAY key_list LOOP
+		j := j || jsonb_build_object(t,rec->t);
+	END LOOP;
+	RETURN j;
+END;
+$$;
+
+
+SET search_path = tps, pg_catalog;
+
 --
 -- Name: jsonb_concat(jsonb, jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --

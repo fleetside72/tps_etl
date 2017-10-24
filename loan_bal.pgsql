@@ -1,4 +1,4 @@
-
+\timing
 SELECT 
     r.*,
     SUM(r."Advances"+r."Adjustments"-r."Payments") OVER (ORDER BY r."Post Date" asc ,r."Reference #" asc)

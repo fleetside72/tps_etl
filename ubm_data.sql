@@ -168,7 +168,7 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 1544069, true);
+SELECT pg_catalog.setval('trans_id_seq', 1544080, true);
 
 
 --

@@ -1,3 +1,6 @@
+SET auto_explain.log_min_duration = 0;
+SHOW ALL;
+
 \timing
 
 /*--------------------------------------------------------
@@ -59,6 +62,12 @@ BEGIN
 
     EXECUTE _t;
 
+
+
+END
+$$;
+
+
     WITH 
 
     -------------for each imported row in the COPY table, genereate the json rec, and a column for the json key specified in the srce.defn-----------
@@ -77,7 +86,7 @@ BEGIN
         FROM
             csv_i i
             INNER JOIN tps.srce s ON
-                s.srce = _srce
+                s.srce = 'PNCO'
             LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
         GROUP BY
             i.*,
@@ -155,12 +164,13 @@ BEGIN
     --------insert to log-------------------------------------------------------------------------------------------------------------------------------------
     --below select should be loaded to the log table
 
-
+    
 
     --------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
 
+
     SELECT
-        t.srce
+        jsonb_build_object('srce', t.srce) srce,
         ,(ae.e::text[])[1] unq_constr
         ,MIN(rec #>> ae.e::text[]) min_text
         ,MAX(rec #>> ae.e::text[]) max_text
@@ -173,6 +183,4 @@ BEGIN
     GROUP BY
         t.srce
         ,(ae.e::text[])[1];
-
-END
-$$;
+    */
