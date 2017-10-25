@@ -273,6 +273,7 @@ CREATE TABLE trans (
     id integer NOT NULL,
     srce text,
     rec jsonb,
+    parse jsonb,
     map jsonb
 );
 
