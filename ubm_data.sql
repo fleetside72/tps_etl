@@ -31,6 +31,7 @@ SET search_path = tps, pg_catalog;
 INSERT INTO srce (srce, defn) VALUES ('PNCC', '{"name": "PNCC", "type": "csv", "schema": [{"key": "AsOfDate", "type": "date"}, {"key": "BankId", "type": "text"}, {"key": "AccountNumber", "type": "text"}, {"key": "AccountName", "type": "text"}, {"key": "BaiControl", "type": "text"}, {"key": "Currency", "type": "text"}, {"key": "Transaction", "type": "text"}, {"key": "Reference", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Description", "type": "text"}, {"key": "AdditionalRemittance", "type": "text"}], "unique_constraint": {"type": "range", "fields": ["{AsOfDate}"]}}');
 INSERT INTO srce (srce, defn) VALUES ('DCARD', '{"name": "DCARD", "type": "csv", "schema": [{"key": "Trans. Date", "type": "date"}, {"key": "Post Date", "type": "date"}, {"key": "Description", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Category", "type": "text"}], "unique_constraint": {"type": "key", "fields": ["{Post Date}", "{Trans. Date}"]}}');
 INSERT INTO srce (srce, defn) VALUES ('HUNT', '{"name": "HUNT", "type": "csv", "schema": [{"key": "Date", "type": "date"}, {"key": "Reference Number", "type": "numeric"}, {"key": "Payee Name", "type": "text"}, {"key": "Memo", "type": "text"}, {"key": "Amount", "type": "text"}, {"key": "Category Name", "type": "text"}], "unique_constraint": {"type": "key", "fields": ["{Date}"]}}');
+INSERT INTO srce (srce, defn) VALUES ('CAMZ', '{"name": "CAMZ", "type": "csv", "schema": [{"key": "Type", "type": "text"}, {"key": "Trans Date", "type": "date"}, {"key": "Post Date", "type": "date"}, {"key": "Description", "type": "text"}, {"key": "Amount", "type": "numeric"}], "description": "Chase Amazon Credit Card", "unique_constraint": {"type": "key", "fields": ["{Trans Date}", "{Post Date}"]}}');
 
 
 --
@@ -431,7 +432,12 @@ INSERT INTO trans (id, srce, rec, map) VALUES (2651, 'DCARD', '{"id": 35, "Amoun
 INSERT INTO trans (id, srce, rec, map) VALUES (2652, 'DCARD', '{"id": 36, "Amount": "28.42", "Category": "Restaurants", "Post Date": "2017-10-21", "Description": "ARBYS #1831 STOW STOW OH", "Trans. Date": "2017-10-21"}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2653, 'DCARD', '{"id": 37, "Amount": "23.75", "Category": "Merchandise", "Post Date": "2017-10-21", "Description": "DISCOUNT DRUG MART 32 STOW OH", "Trans. Date": "2017-10-21"}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2152, 'HUNT', '{"Date": "2017-05-02", "Memo": "SUBSTITUTE CHECK", "Amount": "-1000", "Payee Name": "", "Category Name": "", "Reference Number": 1800}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2654, 'HUNT', '{"id": 7, "Date": "2017-10-18", "Memo": "SUBSTITUTE CHECK", "Amount": "-700", "Payee Name": "", "Category Name": "", "Reference Number": 1841}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2655, 'HUNT', '{"id": 8, "Date": "2017-10-23", "Memo": "SUBSTITUTE CHECK", "Amount": "-39.45", "Payee Name": "", "Category Name": "", "Reference Number": 1842}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2656, 'HUNT', '{"id": 9, "Date": "2017-10-23", "Memo": "SUBSTITUTE CHECK", "Amount": "-171.19", "Payee Name": "", "Category Name": "", "Reference Number": 1843}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2128, 'HUNT', '{"Date": "2017-06-07", "Memo": "SUBSTITUTE CHECK", "Amount": "-700", "Payee Name": "", "Category Name": "", "Reference Number": 1808}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2657, 'CAMZ', '{"id": 1, "Type": "Sale", "Amount": -2.30, "Post Date": "2017-10-24", "Trans Date": "2017-10-23", "Description": "SQ *CORNER CUP COFFEEHOUS"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2658, 'CAMZ', '{"id": 2, "Type": "Payment", "Amount": 9.26, "Post Date": "2017-07-24", "Trans Date": "2017-07-24", "Description": "Payment Thank You - Web"}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (94, 'DCARD', '{"Amount": "119.03", "Category": "Merchandise", "Post Date": "2017-05-07", "Description": "TARGET STOW OH", "Trans. Date": "2017-05-05"}', '{"f20": "TARGET STOW OH", "party": "Target", "reason": "Groceries"}');
 INSERT INTO trans (id, srce, rec, map) VALUES (2356, 'HUNT', '{"Date": "2016-02-05", "Memo": "FIRSTENERGY OPCOFE ECHECK", "Amount": "-122.85", "Payee Name": "FIRSTENERGY OPCO FE ECHECK", "Category Name": "", "Reference Number": 0}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2376, 'HUNT', '{"Date": "2015-12-30", "Memo": "SUBSTITUTE CHECK", "Amount": "-600.00", "Payee Name": "", "Category Name": "", "Reference Number": 1685}', NULL);
@@ -3073,6 +3079,10 @@ INSERT INTO trans (id, srce, rec, map) VALUES (2093, 'DCARD', '{"Amount": "77.47
 -- Data for Name: trans_log; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
+INSERT INTO trans_log (id, info) VALUES (1, '{"srce": "DCARD", "inserted": null, "time_stamp": "2017-10-25T00:34:32.394561-04:00", "not_inserted": [{"Post Date": "2017-10-12", "Trans. Date": "2017-10-12"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-05"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-07"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-06"}, {"Post Date": "2017-10-16", "Trans. Date": "2017-10-16"}, {"Post Date": "2017-10-09", "Trans. Date": "2017-10-09"}, {"Post Date": "2017-10-15", "Trans. Date": "2017-10-15"}, {"Post Date": "2017-10-21", "Trans. Date": "2017-10-21"}, {"Post Date": "2017-10-14", "Trans. Date": "2017-10-14"}, {"Post Date": "2017-10-20", "Trans. Date": "2017-10-20"}, {"Post Date": "2017-10-19", "Trans. Date": "2017-10-19"}, {"Post Date": "2017-10-17", "Trans. Date": "2017-10-17"}, {"Post Date": "2017-10-18", "Trans. Date": "2017-10-18"}, {"Post Date": "2017-10-08", "Trans. Date": "2017-10-08"}]}');
+INSERT INTO trans_log (id, info) VALUES (2, '{"path": "C:\\users\\fleet\\downloads\\dc1024.csv", "srce": "DCARD", "inserted": null, "time_stamp": "2017-10-25T00:39:17.535844-04:00", "not_inserted": [{"Post Date": "2017-10-12", "Trans. Date": "2017-10-12"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-05"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-07"}, {"Post Date": "2017-10-07", "Trans. Date": "2017-10-06"}, {"Post Date": "2017-10-16", "Trans. Date": "2017-10-16"}, {"Post Date": "2017-10-09", "Trans. Date": "2017-10-09"}, {"Post Date": "2017-10-15", "Trans. Date": "2017-10-15"}, {"Post Date": "2017-10-21", "Trans. Date": "2017-10-21"}, {"Post Date": "2017-10-14", "Trans. Date": "2017-10-14"}, {"Post Date": "2017-10-20", "Trans. Date": "2017-10-20"}, {"Post Date": "2017-10-19", "Trans. Date": "2017-10-19"}, {"Post Date": "2017-10-17", "Trans. Date": "2017-10-17"}, {"Post Date": "2017-10-18", "Trans. Date": "2017-10-18"}, {"Post Date": "2017-10-08", "Trans. Date": "2017-10-08"}]}');
+INSERT INTO trans_log (id, info) VALUES (3, '{"path": "C:\\users\\fleet\\downloads\\h1025.csv", "srce": "HUNT", "inserted": [{"Date": "2017-10-18"}, {"Date": "2017-10-23"}], "time_stamp": "2017-10-25T00:54:26.434583-04:00", "not_inserted": [{"Date": "2017-10-17"}, {"Date": "2017-10-11"}, {"Date": "2017-10-13"}]}');
+INSERT INTO trans_log (id, info) VALUES (4, '{"path": "C:\\users\\fleet\\downloads\\c1025.csv", "srce": "CAMZ", "inserted": [{"Post Date": "2017-07-24", "Trans Date": "2017-07-24"}, {"Post Date": "2017-10-24", "Trans Date": "2017-10-23"}], "time_stamp": "2017-10-25T01:02:32.269294-04:00", "not_inserted": null}');
 
 
 SET search_path = evt, pg_catalog;
@@ -3090,14 +3100,14 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 2653, true);
+SELECT pg_catalog.setval('trans_id_seq', 2658, true);
 
 
 --
 -- Name: trans_log_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_log_id_seq', 1, false);
+SELECT pg_catalog.setval('trans_log_id_seq', 4, true);
 
 
 --
