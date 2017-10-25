@@ -16,11 +16,13 @@ DECLARE _t text;
 DECLARE _c text;
 DECLARE _path text;
 DECLARE _srce text;
+DECLARE _log_info text;
+DECLARE _log_id text;
 
 BEGIN
 
-    _path := 'C:\users\fleet\downloads\dc1024.csv';
-    _srce := 'DCARD';
+    _path := 'C:\users\ptrowbridge\downloads\llcol.csv';
+    _srce := 'PNCL';
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
@@ -152,6 +154,7 @@ BEGIN
 
     --------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
 
+    , logged AS (
     INSERT INTO
         tps.trans_log (info)
     SELECT
@@ -173,7 +176,20 @@ BEGIN
                 FROM
                     unmatched_keys
             )
-        );
+        )
+    RETURNING *
+    )
+
+    SELECT
+        id
+        ,info
+    INTO
+        _log_id
+        ,_log_info
+    FROM
+        logged;
+
+    RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
 
 END
 $$;
