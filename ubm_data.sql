@@ -415,6 +415,21 @@ INSERT INTO map_rv (srce, target, retval, map) VALUES ('DCARD', 'First 20', '{"f
 -- Data for Name: trans; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
+INSERT INTO trans (id, srce, rec, map) VALUES (2639, 'DCARD', '{"id": 23, "Amount": "1.19", "Category": "Merchandise", "Post Date": "2017-10-15", "Description": "DISCOUNT DRUG MART 32 STOW OH", "Trans. Date": "2017-10-15"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2640, 'DCARD', '{"id": 24, "Amount": "12.86", "Category": "Automotive", "Post Date": "2017-10-16", "Description": "AUTOZONE #1941 STREETSBORO OH", "Trans. Date": "2017-10-16"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2641, 'DCARD', '{"id": 25, "Amount": "6.50", "Category": "Restaurants", "Post Date": "2017-10-16", "Description": "EL CAMPESINO STOW OH", "Trans. Date": "2017-10-16"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2642, 'DCARD', '{"id": 26, "Amount": "60.00", "Category": "Services", "Post Date": "2017-10-16", "Description": "REMEMBERNHU 402-935-7733 IA", "Trans. Date": "2017-10-16"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2643, 'DCARD', '{"id": 27, "Amount": "38.45", "Category": "Gasoline", "Post Date": "2017-10-17", "Description": "SPEEDWAY 03686 496 STOW OH", "Trans. Date": "2017-10-17"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2644, 'DCARD', '{"id": 28, "Amount": "3.28", "Category": "Supermarkets", "Post Date": "2017-10-17", "Description": "WALMART GROCERY 800-966-6546 AR", "Trans. Date": "2017-10-17"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2645, 'DCARD', '{"id": 29, "Amount": "234.07", "Category": "Supermarkets", "Post Date": "2017-10-17", "Description": "WALMART GROCERY 800-966-6546 AR", "Trans. Date": "2017-10-17"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2646, 'DCARD', '{"id": 30, "Amount": "21.35", "Category": "Merchandise", "Post Date": "2017-10-18", "Description": "DOLLAR TREE STOW OH", "Trans. Date": "2017-10-18"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2647, 'DCARD', '{"id": 31, "Amount": "10.20", "Category": "Supermarkets", "Post Date": "2017-10-18", "Description": "GIANT-EAGLE #4096 STOW OH", "Trans. Date": "2017-10-18"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2648, 'DCARD', '{"id": 32, "Amount": "30.94", "Category": "Merchandise", "Post Date": "2017-10-18", "Description": "TARGET STOW OH", "Trans. Date": "2017-10-18"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2649, 'DCARD', '{"id": 33, "Amount": "18.14", "Category": "Restaurants", "Post Date": "2017-10-19", "Description": "ARBYS #1831 STOW STOW OH", "Trans. Date": "2017-10-19"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2650, 'DCARD', '{"id": 34, "Amount": "19.60", "Category": "Merchandise", "Post Date": "2017-10-19", "Description": "DISCOUNT DRUG MART 32 STOW OH", "Trans. Date": "2017-10-19"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2651, 'DCARD', '{"id": 35, "Amount": "78.36", "Category": "Merchandise", "Post Date": "2017-10-20", "Description": "TARGET STREETSBORO OH", "Trans. Date": "2017-10-20"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2652, 'DCARD', '{"id": 36, "Amount": "28.42", "Category": "Restaurants", "Post Date": "2017-10-21", "Description": "ARBYS #1831 STOW STOW OH", "Trans. Date": "2017-10-21"}', NULL);
+INSERT INTO trans (id, srce, rec, map) VALUES (2653, 'DCARD', '{"id": 37, "Amount": "23.75", "Category": "Merchandise", "Post Date": "2017-10-21", "Description": "DISCOUNT DRUG MART 32 STOW OH", "Trans. Date": "2017-10-21"}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2152, 'HUNT', '{"Date": "2017-05-02", "Memo": "SUBSTITUTE CHECK", "Amount": "-1000", "Payee Name": "", "Category Name": "", "Reference Number": 1800}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (2128, 'HUNT', '{"Date": "2017-06-07", "Memo": "SUBSTITUTE CHECK", "Amount": "-700", "Payee Name": "", "Category Name": "", "Reference Number": 1808}', NULL);
 INSERT INTO trans (id, srce, rec, map) VALUES (94, 'DCARD', '{"Amount": "119.03", "Category": "Merchandise", "Post Date": "2017-05-07", "Description": "TARGET STOW OH", "Trans. Date": "2017-05-05"}', '{"f20": "TARGET STOW OH", "party": "Target", "reason": "Groceries"}');
@@ -3054,6 +3069,12 @@ INSERT INTO trans (id, srce, rec, map) VALUES (2092, 'DCARD', '{"Amount": "14.00
 INSERT INTO trans (id, srce, rec, map) VALUES (2093, 'DCARD', '{"Amount": "77.47", "Category": "Merchandise", "Post Date": "2017-08-07", "Description": "WAL-MART SC - #2313 STREETSBORO OH", "Trans. Date": "2017-08-04"}', '{"f20": "WAL-MART SC - #2313 ", "party": "Wal-Mart", "reason": "Home Supplies"}');
 
 
+--
+-- Data for Name: trans_log; Type: TABLE DATA; Schema: tps; Owner: -
+--
+
+
+
 SET search_path = evt, pg_catalog;
 
 --
@@ -3069,7 +3090,14 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 2638, true);
+SELECT pg_catalog.setval('trans_id_seq', 2653, true);
+
+
+--
+-- Name: trans_log_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
+--
+
+SELECT pg_catalog.setval('trans_log_id_seq', 1, false);
 
 
 --
