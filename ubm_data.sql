@@ -38,11 +38,11 @@ INSERT INTO srce (srce, defn) VALUES ('ADPRP', '{"name": "ADPRP", "type": "csv",
 -- Data for Name: map_rm; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
-INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'ACH Debits', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "compn", "regex": "Comp Name:(.+?)(?=$| Comp|\\w+?:)", "retain": "y"}, {"key": "{Description}", "field": "adp_comp", "regex": "Cust ID:.*?(B3X|UDV|U7E|U7C|U7H|U7J).*?(?=$|\\w+?:)", "retain": "y"}, {"key": "{Description}", "field": "desc", "regex": "Desc:(.+?) Comp", "retain": "y"}, {"key": "{Description}", "field": "discr", "regex": "Discr:(.+?)(?=$| SEC:|\\w+?:)", "retain": "y"}], "where": [{"Transaction": "ACH Debits"}]}', 2);
-INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Trans Type', '{"defn": [{"key": "{AccountName}", "field": "acctn", "regex": "(.*)", "retain": "n"}, {"key": "{Transaction}", "field": "trans", "regex": "(.*)", "retain": "n"}, {"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}], "where": [{}]}', 1);
-INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Wires Out', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "bene", "regex": "BENEFICIARY:(.+?) AC/", "retain": "y"}, {"key": "{Description}", "field": "accts", "regex": "AC/(\\w*) .*AC/(\\w*) ", "retain": "y"}], "where": [{"Transaction": "Intl Money Transfer Debits"}, {"Transaction": "Money Transfer DB - Wire"}]}', 2);
-INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Currency', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "curr1", "regex": ".*(DEBIT|CREDIT).*(USD|CAD).*(?=DEBIT|CREDIT).*(?=USD|CAD).*", "retain": "y"}, {"key": "{Description}", "field": "curr2", "regex": ".*(?=DEBIT|CREDIT).*(?=USD|CAD).*(DEBIT|CREDIT).*(USD|CAD).*", "retain": "y"}], "where": [{"Transaction": "Miscellaneous Credits"}, {"Transaction": "Miscellaneous Debits"}]}', 2);
-INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Check Number', '{"defn": [{"key": "{Description}", "field": "checkn", "regex": "[^0-9]*([0-9]*)\\s|$", "retain": "y"}], "where": [{"Transaction": "Checks Paid"}]}', 2);
+INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'ACH Debits', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "compn", "regex": "Comp Name:(.+?)(?=$| Comp|\\w+?:)", "retain": "y"}, {"key": "{Description}", "field": "adp_comp", "regex": "Cust ID:.*?(B3X|UDV|U7E|U7C|U7H|U7J).*?(?=$|\\w+?:)", "retain": "y"}, {"key": "{Description}", "field": "desc", "regex": "Desc:(.+?) Comp", "retain": "y"}, {"key": "{Description}", "field": "discr", "regex": "Discr:(.+?)(?=$| SEC:|\\w+?:)", "retain": "y"}], "where": [{"Transaction": "ACH Debits"}], "function": "extract"}', 2);
+INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Trans Type', '{"defn": [{"key": "{AccountName}", "field": "acctn", "regex": "(.*)", "retain": "n"}, {"key": "{Transaction}", "field": "trans", "regex": "(.*)", "retain": "n"}, {"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}], "where": [{}], "function": "extract"}', 1);
+INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Wires Out', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "bene", "regex": "BENEFICIARY:(.+?) AC/", "retain": "y"}, {"key": "{Description}", "field": "accts", "regex": "AC/(\\w*) .*AC/(\\w*) ", "retain": "y"}], "where": [{"Transaction": "Intl Money Transfer Debits"}, {"Transaction": "Money Transfer DB - Wire"}], "function": "extract"}', 2);
+INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Currency', '{"defn": [{"key": "{Description}", "field": "ini", "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)", "retain": "y"}, {"key": "{Description}", "field": "curr1", "regex": ".*(DEBIT|CREDIT).*(USD|CAD).*(?=DEBIT|CREDIT).*(?=USD|CAD).*", "retain": "y"}, {"key": "{Description}", "field": "curr2", "regex": ".*(?=DEBIT|CREDIT).*(?=USD|CAD).*(DEBIT|CREDIT).*(USD|CAD).*", "retain": "y"}], "where": [{"Transaction": "Miscellaneous Credits"}, {"Transaction": "Miscellaneous Debits"}], "function": "extract"}', 2);
+INSERT INTO map_rm (srce, target, regex, seq) VALUES ('PNCC', 'Check Number', '{"defn": [{"key": "{Description}", "field": "checkn", "regex": "[^0-9]*([0-9]*)\\s|$", "retain": "y"}], "where": [{"Transaction": "Checks Paid"}], "function": "extract"}', 2);
 
 
 --
@@ -145,12 +145,19 @@ INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'Trans Type', '{"
 INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'ACH Debits', '{"ini": "ACH DEBIT RECEIVED", "desc": " WAGE GARN", "compn": " ADP WAGE GARN"}', '{"party": "ADP", "reason": "Payroll Garnishments"}');
 INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'ACH Debits', '{"ini": "ACH DEBIT RECEIVED", "desc": " WAGE PAY", "compn": " ADP WAGE PAY"}', '{"party": "ADP", "reason": "Payroll Direct Deposit"}');
 INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'ACH Debits', '{"ini": "ACH DEBIT RECEIVED", "desc": " DBI COBRA", "compn": " DBI COBRA"}', '{"party": "ADP", "reason": "Payroll Direct Deposit"}');
+INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'Trans Type', '{"ini": "ACH DEBIT RETURN", "acctn": "The HC Operating Company OPERA", "trans": "ACH Debits"}', '{"sign": "-1", "ledger": "manual", "trantype": "Disbursement"}');
+INSERT INTO map_rv (srce, target, retval, map) VALUES ('PNCC', 'Trans Type', '{"ini": "ACH CREDIT SETTLEMENT", "acctn": "The HC Operating Company OPERA", "trans": "ACH Credits"}', '{"sign": "1", "ledger": "manual", "trantype": "Disbursement"}');
 
 
 --
 -- Data for Name: trans_log; Type: TABLE DATA; Schema: tps; Owner: -
 --
 
+INSERT INTO trans_log (id, info) VALUES (1, '{"path": "C:\\users\\ptrowbridge\\downloads\\lon_loan_ledgercol.csv", "srce": "PNCL", "inserted": [{"PostDate": "2017-10-17", "Schedule#": "05AR"}, {"PostDate": "2017-10-17", "Schedule#": "MR"}, {"PostDate": "2017-10-20", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "03IN Finished Goods"}, {"PostDate": "2017-10-17", "Schedule#": "04AR RS"}, {"PostDate": "2017-10-19", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "06AR RS"}, {"PostDate": "2017-10-17", "Schedule#": "02IN Raw Material"}], "time_stamp": "2017-10-25T09:52:10.221392-04:00", "not_inserted": [{"PostDate": "2017-10-18", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "01AR"}]}');
+INSERT INTO trans_log (id, info) VALUES (2, '{"path": "C:\\users\\ptrowbridge\\downloads\\transsearchcsv(1).csv", "srce": "PNCC", "inserted": [{"AsOfDate": "2017-10-24"}, {"AsOfDate": "2017-10-23"}], "time_stamp": "2017-10-25T10:04:21.618701-04:00", "not_inserted": [{"AsOfDate": "2017-10-19"}, {"AsOfDate": "2017-10-20"}, {"AsOfDate": "2017-10-18"}]}');
+INSERT INTO trans_log (id, info) VALUES (3, '{"path": "C:\\users\\ptrowbridge\\downloads\\transsearchcsv(1).csv", "srce": "PNCC", "inserted": null, "time_stamp": "2017-10-25T10:08:11.443367-04:00", "not_inserted": [{"AsOfDate": "2017-10-19"}, {"AsOfDate": "2017-10-24"}, {"AsOfDate": "2017-10-20"}, {"AsOfDate": "2017-10-23"}, {"AsOfDate": "2017-10-18"}]}');
+INSERT INTO trans_log (id, info) VALUES (4, '{"path": "C:\\users\\ptrowbridge\\downloads\\llbal.csv", "srce": "PNCO", "inserted": [{"Loan#": "606780191", "Post Date": "2017-10-23", "Effective Date": "2017-10-23"}, {"Loan#": "606780191", "Post Date": "2017-10-24", "Effective Date": "2017-10-24"}], "time_stamp": "2017-10-25T10:13:37.760308-04:00", "not_inserted": [{"Loan#": "606780191", "Post Date": "2017-10-19", "Effective Date": "2017-10-19"}, {"Loan#": "606780191", "Post Date": "2017-10-18", "Effective Date": "2017-10-18"}, {"Loan#": "606780191", "Post Date": "2017-10-20", "Effective Date": "2017-10-20"}]}');
+INSERT INTO trans_log (id, info) VALUES (5, '{"path": "C:\\users\\ptrowbridge\\downloads\\llcol.csv", "srce": "PNCL", "inserted": [{"PostDate": "2017-10-24", "Schedule#": "01AR"}, {"PostDate": "2017-10-23", "Schedule#": "01AR"}], "time_stamp": "2017-10-25T10:14:10.004265-04:00", "not_inserted": [{"PostDate": "2017-10-18", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "05AR"}, {"PostDate": "2017-10-17", "Schedule#": "MR"}, {"PostDate": "2017-10-20", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "03IN Finished Goods"}, {"PostDate": "2017-10-17", "Schedule#": "04AR RS"}, {"PostDate": "2017-10-19", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "06AR RS"}, {"PostDate": "2017-10-17", "Schedule#": "02IN Raw Material"}]}');
 
 
 SET search_path = evt, pg_catalog;
@@ -168,14 +175,14 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 1544080, true);
+SELECT pg_catalog.setval('trans_id_seq', 1544252, true);
 
 
 --
 -- Name: trans_log_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_log_id_seq', 1, false);
+SELECT pg_catalog.setval('trans_log_id_seq', 5, true);
 
 
 --

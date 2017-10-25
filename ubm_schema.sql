@@ -15,6 +15,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: bank; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA bank;
+
+
+--
 -- Name: evt; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -68,6 +75,27 @@ CREATE EXTENSION IF NOT EXISTS plprofiler WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION plprofiler IS 'server-side support for profiling PL/pgSQL functions';
+
+
+SET search_path = bank, pg_catalog;
+
+--
+-- Name: pncc; Type: TYPE; Schema: bank; Owner: -
+--
+
+CREATE TYPE pncc AS (
+	"AsOfDate" date,
+	"BankId" text,
+	"AccountNumber" text,
+	"AccountName" text,
+	"BaiControl" text,
+	"Currency" text,
+	"Transaction" text,
+	"Reference" text,
+	"Amount" numeric,
+	"Description" text,
+	"AdditionalRemittance" text
+);
 
 
 SET search_path = tps, pg_catalog;
@@ -129,12 +157,14 @@ CREATE FUNCTION jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 DECLARE
-	t text;
+	t text[];
 	j jsonb := '{}'::jsonb;
 	
 BEGIN
-	FOREACH t IN ARRAY key_list LOOP
-		j := j || jsonb_build_object(t,rec->t);
+	FOREACH t SLICE 1 IN ARRAY key_list LOOP
+		--RAISE NOTICE '%', t;
+		--RAISE NOTICE '%', t[1];
+		j := j || jsonb_build_object(t[1],rec#>t);
 	END LOOP;
 	RETURN j;
 END;
