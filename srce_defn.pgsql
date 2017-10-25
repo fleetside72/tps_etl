@@ -7,11 +7,13 @@ SELECT
 FROM
     tps.srce
 )
+
+
 SELECT
-    srce
-    ,
-    public.jsonb_extract(rec,txa)
+    t.srce
+    ,jsonb_pretty(t.rec)
+    ,jsonb_pretty(public.jsonb_extract(rec,txa))
 FROM
-    tps.trans
+    tps.trans t
     INNER JOIN ext ON
-        trans.srce = ext.srce
+        t.srce = ext.srce
