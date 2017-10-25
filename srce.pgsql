@@ -1,6 +1,3 @@
-SET auto_explain.log_min_duration = 0;
-SHOW ALL;
-
 \timing
 
 /*--------------------------------------------------------
@@ -9,8 +6,7 @@ SHOW ALL;
 2. get unqiue pending keys
 3. see which keys not already in tps.trans
 4. insert pending records associated with keys that are not already in trans
-5. get list of recors not inserted
-6. summarize records not inserted
+5. insert summary to log table
 */---------------------------------------------------------
 
 
@@ -23,8 +19,8 @@ DECLARE _srce text;
 
 BEGIN
 
-    _path := 'C:\users\ptrowbridge\downloads\lon_loan_ledgerbal.csv';
-    _srce := 'PNCO';
+    _path := 'C:\users\fleet\downloads\dc1024.csv';
+    _srce := 'DCARD';
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
@@ -35,7 +31,7 @@ BEGIN
     	_t, 
         _c
     FROM 
-        TPS.srce
+        tps.srce
         --unwrap the schema definition array
         LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
     WHERE   
@@ -62,22 +58,29 @@ BEGIN
 
     EXECUTE _t;
 
-
-
-END
-$$;
-
-
     WITH 
+
+    -------------extract the limiter fields to one row per source----------------------------------
+
+    ext AS (
+    SELECT 
+        srce
+        ,defn->'unique_constraint'->>'fields'
+        ,ARRAY(SELECT ae.e::text[] FROM jsonb_array_elements_text(defn->'unique_constraint'->'fields') ae(e)) text_array
+    FROM
+        tps.srce
+    WHERE
+        srce = _srce
+        --add where clause for targeted source
+    )
 
     -------------for each imported row in the COPY table, genereate the json rec, and a column for the json key specified in the srce.defn-----------
 
-    pending_list AS (
+    ,pending_list AS (
         SELECT
-            ---creates a key value pair and then aggregates rows of key value pairs
-            jsonb_object_agg(
-                    (ae.e::text[])[1],                                  --the key name
-                    (row_to_json(i)::jsonb) #> ae.e::text[]             --get the target value from the key from the csv row that has been converted to json
+            jsonb_extract(
+                    row_to_json(i)::jsonb
+                    ,ext.text_array
             ) json_key,
             row_to_json(i)::JSONB rec,
             srce,
@@ -85,13 +88,8 @@ $$;
             id
         FROM
             csv_i i
-            INNER JOIN tps.srce s ON
-                s.srce = 'PNCO'
-            LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
-        GROUP BY
-            i.*,
-            srce,
-            id
+            INNER JOIN ext ON
+                ext.srce = _srce
         ORDER BY    
             id ASC
     )
@@ -105,6 +103,17 @@ $$;
             pending_list
     )
 
+    -----------list of keys already loaded to tps-----------------------------------------------------------------------------------------------------
+
+    , matched_keys AS (
+        SELECT DISTINCT
+            k.json_key
+        FROM
+            pending_keys k
+            INNER JOIN tps.trans t ON
+                t.rec @> k.json_key
+    )
+
     -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
 
     , unmatched_keys AS (
@@ -115,12 +124,10 @@ $$;
 
     EXCEPT
 
-    SELECT DISTINCT
-        k.json_key
+    SELECT
+        json_key
     FROM
-        pending_keys k
-        INNER JOIN tps.trans t ON
-            t.rec @> k.json_key
+        matched_keys
     )
 
     -----------insert pending rows that have key with no trans match-----------------------------------------------------------------------------------
@@ -143,44 +150,31 @@ $$;
         RETURNING *
     )
 
-    -----------list of records not inserted--------------------------------------------------------------------------------------------------------------
-
-    , not_inserted AS (
-        SELECT
-            srce
-            ,rec
-        FROM
-            pending_list
-
-        EXCEPT ALL
-
-        SELECT 
-            srce
-            ,rec
-        FROM 
-            inserted
-    )
-
-    --------insert to log-------------------------------------------------------------------------------------------------------------------------------------
-    --below select should be loaded to the log table
-
-    
-
     --------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
 
-
+    INSERT INTO
+        tps.trans_log (info)
     SELECT
-        jsonb_build_object('srce', t.srce) srce,
-        ,(ae.e::text[])[1] unq_constr
-        ,MIN(rec #>> ae.e::text[]) min_text
-        ,MAX(rec #>> ae.e::text[]) max_text
-        ,JSONB_PRETTY(JSON_AGG(rec #> ae.e::text[] ORDER BY rec #>> ae.e::text[])::JSONB)
-    FROM
-        not_inserted t
-        INNER JOIN tps.srce s ON
-            s.srce = t.srce
-        LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(defn->'unique_constraint'->'fields') WITH ORDINALITY ae(e, rn) ON TRUE
-    GROUP BY
-        t.srce
-        ,(ae.e::text[])[1];
-    */
+        JSONB_BUILD_OBJECT('time_stamp',CURRENT_TIMESTAMP)
+        ||JSONB_BUILD_OBJECT('srce',_srce)
+        ||JSONB_BUILD_OBJECT('path',_path)
+        ||JSONB_BUILD_OBJECT('not_inserted',
+            (
+                SELECT 
+                    jsonb_agg(json_key)
+                FROM
+                    matched_keys
+            )
+        )
+        ||JSONB_BUILD_OBJECT('inserted',
+            (
+                SELECT 
+                    jsonb_agg(json_key)
+                FROM
+                    unmatched_keys
+            )
+        );
+
+END
+$$;
+
