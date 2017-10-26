@@ -274,7 +274,8 @@ CREATE TABLE trans (
     srce text,
     rec jsonb,
     parse jsonb,
-    map jsonb
+    map jsonb,
+    allj jsonb
 );
 
 
@@ -366,6 +367,13 @@ ALTER TABLE ONLY trans_log
 
 ALTER TABLE ONLY trans
     ADD CONSTRAINT trans_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trans_allj; Type: INDEX; Schema: tps; Owner: -
+--
+
+CREATE INDEX trans_allj ON trans USING gin (allj);
 
 
 --
