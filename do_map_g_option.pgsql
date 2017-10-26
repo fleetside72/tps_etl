@@ -77,12 +77,15 @@ FROM
         m.regex->>'function' = 'replace'
 WHERE
     t.srce = 'PNCC'
+    --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
     t.id DESC,
     m.target,
     e.rn,
     COALESCE(mt.rn,rp.rn,1)
 )
+
+--SELECT * FROM rx
 
 , agg_to_target_items AS (
 SELECT 
@@ -137,14 +140,16 @@ GROUP BY
     ,retain_key
 )
 
+--SELECT * FROM agg_to_target_items
+
 , agg_to_target AS (
 SELECT
     srce
     ,id
     ,target
     ,map_intention
-    ,tps.jsonb_concat_obj(map_val) map_val
-    ,tps.jsonb_concat_obj(retain_val) retain_val
+    ,tps.jsonb_concat_obj(COALESCE(map_val,'{}'::JSONB)) map_val
+    ,jsonb_strip_nulls(tps.jsonb_concat_obj(COALESCE(retain_val,'{}'::JSONB))) retain_val
 FROM
     agg_to_target_items
 GROUP BY
@@ -156,6 +161,10 @@ ORDER BY
     id
 )
 
+
+--SELECT * FROM agg_to_target
+
+
 , link_map AS (
 SELECT
     a.srce
@@ -163,7 +172,7 @@ SELECT
     ,a.target
     ,a.map_intention
     ,a.map_val
-    ,jsonb_strip_nulls(a.retain_val) retain_value
+    ,a.retain_val retain_value
     ,v.map
 FROM
     agg_to_target a
@@ -173,6 +182,9 @@ FROM
         v.retval = a.map_val
 )
 
+--SELECT * FROM link_map
+
+, agg_to_id AS (
 SELECT
     srce
     ,id
@@ -183,4 +195,18 @@ FROM
 GROUP BY
     srce
     ,id
-    
+)
+
+--SELECT * FROM agg_to_id
+
+
+UPDATE
+    tps.trans t
+SET
+    map = o.map,
+    parse = o.retain_val,
+    allj = t.rec||o.map||o.retain_val
+FROM
+    agg_to_id o
+WHERE
+    o.id = t.id;
