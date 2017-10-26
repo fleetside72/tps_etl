@@ -19,7 +19,7 @@ DECLARE _srce text;
 
 BEGIN
 
-    _path := 'C:\users\fleet\downloads\dc1024.csv';
+    _path := 'C:\users\fleet\downloads\d1026.csv';
     _srce := 'DCARD';
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
