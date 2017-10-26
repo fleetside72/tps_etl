@@ -1,4 +1,4 @@
-
+\timing
 WITH
 
 --------------------apply regex operations to transactions-----------------------------------------------------------------------------------
@@ -53,11 +53,11 @@ SELECT
             CASE regex->>'function'
                 WHEN 'extract' THEN
                     CASE WHEN array_upper(mt.mt,1)=1 
-                        THEN to_json(mt.mt[1])
+                        THEN to_json(trim(mt.mt[1]))
                         ELSE array_to_json(mt.mt)
                     END::jsonb
                 WHEN 'replace' THEN
-                    to_jsonb(rp.rp)
+                    to_jsonb(rtrim(rp.rp))
                 ELSE
                     '{}'::jsonb
             END
@@ -76,7 +76,8 @@ FROM
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
 WHERE
-    t.srce = 'PNCC'
+    --t.srce = 'PNCC'
+    rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
     t.id DESC,
@@ -197,9 +198,9 @@ GROUP BY
     ,id
 )
 
---SELECT * FROM agg_to_id
+SELECT srce, id, jsonb_pretty(retain_val), jsonb_pretty(map) FROM agg_to_id
 
-
+/*
 UPDATE
     tps.trans t
 SET
@@ -210,3 +211,4 @@ FROM
     agg_to_id o
 WHERE
     o.id = t.id;
+*/
