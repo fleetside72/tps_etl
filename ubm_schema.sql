@@ -15,6 +15,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: bank; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA bank;
+
+
+--
 -- Name: evt; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -54,6 +61,41 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: plprofiler; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plprofiler WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION plprofiler; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plprofiler IS 'server-side support for profiling PL/pgSQL functions';
+
+
+SET search_path = bank, pg_catalog;
+
+--
+-- Name: pncc; Type: TYPE; Schema: bank; Owner: -
+--
+
+CREATE TYPE pncc AS (
+	"AsOfDate" date,
+	"BankId" text,
+	"AccountNumber" text,
+	"AccountName" text,
+	"BaiControl" text,
+	"Currency" text,
+	"Transaction" text,
+	"Reference" text,
+	"Amount" numeric,
+	"Description" text,
+	"AdditionalRemittance" text
+);
 
 
 SET search_path = tps, pg_catalog;
@@ -105,12 +147,14 @@ CREATE FUNCTION jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 DECLARE
-	t text;
+	t text[];
 	j jsonb := '{}'::jsonb;
 	
 BEGIN
-	FOREACH t IN ARRAY key_list LOOP
-		j := j || jsonb_build_object(t,rec->t);
+	FOREACH t SLICE 1 IN ARRAY key_list LOOP
+		--RAISE NOTICE '%', t;
+		--RAISE NOTICE '%', t[1];
+		j := j || jsonb_build_object(t[1],rec#>t);
 	END LOOP;
 	RETURN j;
 END;
@@ -219,7 +263,9 @@ CREATE TABLE trans (
     id integer NOT NULL,
     srce text,
     rec jsonb,
-    map jsonb
+    parse jsonb,
+    map jsonb,
+    allj jsonb
 );
 
 
@@ -311,6 +357,13 @@ ALTER TABLE ONLY trans_log
 
 ALTER TABLE ONLY trans
     ADD CONSTRAINT trans_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trans_allj; Type: INDEX; Schema: tps; Owner: -
+--
+
+CREATE INDEX trans_allj ON trans USING gin (allj);
 
 
 --

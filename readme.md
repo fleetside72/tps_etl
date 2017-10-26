@@ -4,6 +4,8 @@ Concepts
 pull various static files into postgres and do basic transformation without losing the original document
 or getting into custom code for each scenario
 
+the is an in-between for an foreign data wrapper & custom programming
+
 ## Storage
 all records are jsonb
 applied mappings are in associated jsonb documents
@@ -14,6 +16,9 @@ applied mappings are in associated jsonb documents
 ## Mappings
 1. regular expressions are used to extract pieces of the json objects
 2. the results of the regular expressions are bumped up against a list of basic mappings and written to an associated jsonb document
+
+a target represents a whole scenario that needs matched. it can contain several regex expressions. if one fails, then no match is attempted because it coudl result in a false positive based on the @> oeprator used at join time
+`this probably isn't correctly implemented`
 
 ## Transformation tools
 * `COPY`
