@@ -106,7 +106,7 @@ FROM
     $j$::jsonb
     , 2)
 ) x;
-*/
+
 DELETE FROM tps.map_rm  where target = 'Extract RFB';
 INSERT INTO
 tps.map_rm
@@ -144,6 +144,105 @@ FROM
             },
             {
                 "Transaction":"Money Transfer CR-Wire"
+            }
+        ]
+    }
+    $j$::jsonb
+    , 2)
+) x;
+*/
+DELETE FROM tps.map_rm  where target = 'Parse ACH';
+
+INSERT INTO
+tps.map_rm
+SELECT *
+FROM
+(VALUES 
+    ('PNCC', 'Parse ACH', 
+    $j$
+    {
+        "name":"Parse ACH",
+        "description":"parse select components of the description for ACH Credits Receieved",
+        "defn": [
+            {
+                "key": "{Description}",
+                "field":"Comp Name",
+                "regex": "Comp Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Cust ID",
+                "regex": "Cust ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Desc",
+                "regex": "Desc:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Cust Name",
+                "regex": "Cust Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Batch Discr",
+                "regex": "Batch Discr:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Comp ID",
+                "regex": "Comp ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Addenda",
+                "regex": "Addenda:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"SETT",
+                "regex": "SETT:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Date",
+                "regex": "Date:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            },
+            {
+                "key": "{Description}",
+                "field":"Time",
+                "regex": "Time:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y"
+            }
+        ],
+        "function":"extract",
+        "map":"no",
+        "where": [
+            {
+                "Transaction":"ACH Credits"
+            },
+            {
+                "Transaction":"ACH Debits"
             }
         ]
     }
