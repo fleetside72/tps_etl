@@ -9,6 +9,7 @@ SELECT
     t.id,
     t.rec,
     m.target,
+    m.seq,
     regex->>'map' map_intention,
     regex->>'function' regex_function,
     e.v ->> 'field' result_key_name,
@@ -75,9 +76,9 @@ FROM
         m.regex->>'function' = 'extract'
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
-WHERE
+--WHERE
     --t.srce = 'PNCC'
-    rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
+    --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
     t.id DESC,
@@ -93,6 +94,7 @@ SELECT
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,regex_function
     ,target_item_number
@@ -132,6 +134,7 @@ GROUP BY
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,regex_function
     ,target_item_number
@@ -148,6 +151,7 @@ SELECT
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,tps.jsonb_concat_obj(COALESCE(map_val,'{}'::JSONB)) map_val
     ,jsonb_strip_nulls(tps.jsonb_concat_obj(COALESCE(retain_val,'{}'::JSONB))) retain_val
@@ -157,6 +161,7 @@ GROUP BY
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
 ORDER BY
     id
@@ -171,6 +176,7 @@ SELECT
     a.srce
     ,a.id
     ,a.target
+    ,a.seq
     ,a.map_intention
     ,a.map_val
     ,a.retain_val retain_value
@@ -189,7 +195,7 @@ FROM
 SELECT
     srce
     ,id
-    ,tps.jsonb_concat_obj(COALESCE(retain_value,'{}'::jsonb)) retain_val
+    ,tps.jsonb_concat_obj(COALESCE(retain_value,'{}'::jsonb) ORDER BY seq DESC) retain_val
     ,tps.jsonb_concat_obj(COALESCE(map,'{}'::jsonb)) map
 FROM
     link_map
@@ -198,9 +204,10 @@ GROUP BY
     ,id
 )
 
-SELECT srce, id, jsonb_pretty(retain_val), jsonb_pretty(map) FROM agg_to_id
+--SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
 
-/*
+
+
 UPDATE
     tps.trans t
 SET
@@ -211,4 +218,3 @@ FROM
     agg_to_id o
 WHERE
     o.id = t.id;
-*/

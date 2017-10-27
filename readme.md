@@ -17,8 +17,8 @@ applied mappings are in associated jsonb documents
 1. regular expressions are used to extract pieces of the json objects
 2. the results of the regular expressions are bumped up against a list of basic mappings and written to an associated jsonb document
 
-a target represents a whole scenario that needs matched. it can contain several regex expressions. if one fails, then no match is attempted because it coudl result in a false positive based on the @> oeprator used at join time
-`this probably isn't correctly implemented`
+each regex expression within a targeted pattern can be set to map or not. then the mapping items should be joined to map_rv with an `=` as opposed to `@>` to avoid duplication of rows
+
 
 ## Transformation tools
 * `COPY`
