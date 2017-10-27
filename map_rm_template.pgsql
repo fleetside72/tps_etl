@@ -36,7 +36,7 @@ SET regex =
             {
                 "key": "{Description}",
                 "field":"Comp Name",
-                "regex": "Comp Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "regex": "Comp Name:(.+?)(?=\\d{6} Com|SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
                 "flag":"",
                 "retain":"y",
                 "map":"n"
