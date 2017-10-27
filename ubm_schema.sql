@@ -63,20 +63,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
---
--- Name: plprofiler; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plprofiler WITH SCHEMA public;
-
-
---
--- Name: EXTENSION plprofiler; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plprofiler IS 'server-side support for profiling PL/pgSQL functions';
-
-
 SET search_path = bank, pg_catalog;
 
 --
@@ -108,7 +94,7 @@ CREATE TYPE dcard AS (
 	"Trans. Date" date,
 	"Post Date" date,
 	"Description" text,
-	"Amount" text,
+	"Amount" numeric,
 	"Category" text
 );
 
