@@ -1,12 +1,12 @@
 SELECT 
     m.srce,
     m.target,
-    regex->>'map' map_intention,
     regex->>'function' regex_function,
     regex->>'where' where_clause,
     e.v ->> 'field' result_key_name,
     e.v ->> 'key' target_json_path,
     e.v ->> 'flag' regex_options_flag,
+    e.v->>'map' map_intention,
     e.v->>'retain' retain_result,
     e.v->>'regex' regex_expression,
     e.rn target_item_number

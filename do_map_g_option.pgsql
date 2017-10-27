@@ -10,25 +10,25 @@ SELECT
     t.rec,
     m.target,
     m.seq,
-    regex->>'map' map_intention,
     regex->>'function' regex_function,
     e.v ->> 'field' result_key_name,
     e.v ->> 'key' target_json_path,
     e.v ->> 'flag' regex_options_flag,
+    e.v->>'map' map_intention,
     e.v->>'retain' retain_result,
     e.v->>'regex' regex_expression,
     e.rn target_item_number,
     COALESCE(mt.rn,rp.rn,1) result_number,
     mt.mt rx_match,
     rp.rp rx_replace,
-    CASE regex->>'map'
-        WHEN 'yes' THEN
+    CASE e.v->>'map'
+        WHEN 'y' THEN
             e.v->>'field'
         ELSE
             null
     END map_key,
-    CASE regex->>'map'
-        WHEN 'yes' THEN
+    CASE e.v->>'map'
+        WHEN 'y' THEN
             CASE regex->>'function'
                 WHEN 'extract' THEN
                     CASE WHEN array_upper(mt.mt,1)=1 
@@ -87,7 +87,8 @@ ORDER BY
     COALESCE(mt.rn,rp.rn,1)
 )
 
---SELECT * FROM rx
+--SELECT count(*) FROM rx LIMIT 100
+
 
 , agg_to_target_items AS (
 SELECT 
@@ -144,7 +145,8 @@ GROUP BY
     ,retain_key
 )
 
---SELECT * FROM agg_to_target_items
+--SELECT * FROM agg_to_target_items LIMIT 100
+
 
 , agg_to_target AS (
 SELECT
