@@ -77,7 +77,8 @@ FROM
         m.regex->>'function' = 'replace'
 WHERE
     --t.srce = 'PNCC'
-    rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
+    --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
+    t.map IS NULL
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
     t.id DESC,
@@ -200,7 +201,7 @@ GROUP BY
 
 SELECT srce, id, jsonb_pretty(retain_val), jsonb_pretty(map) FROM agg_to_id
 
-/*
+
 UPDATE
     tps.trans t
 SET
@@ -211,4 +212,3 @@ FROM
     agg_to_id o
 WHERE
     o.id = t.id;
-*/

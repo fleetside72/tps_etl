@@ -187,7 +187,8 @@ SET default_with_oids = false;
 
 CREATE TABLE log (
     id integer NOT NULL,
-    rec jsonb
+    rec jsonb,
+    post_stmp timestamp with time zone DEFAULT now()
 );
 
 
