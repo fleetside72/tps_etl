@@ -1,11 +1,6 @@
-/*
-DELETE FROM tps.map_rm  where target = 'Strip Amount Commas';
-INSERT INTO
-tps.map_rm
-SELECT *
-FROM
-(VALUES 
-    ('PNCC', 'Strip Amount Commas', 
+
+UPDATE tps.map_rm  
+SET regex = 
     $j$
     {
         "name":"Strip Amount Commas",
@@ -28,18 +23,11 @@ FROM
         ]
     }
     $j$::jsonb
-    , 1)
-) x;
-*/
+WHERE 
+    target = 'Strip Amount Commas';
 
-DELETE FROM tps.map_rm  where target = 'Parse ACH';
-
-INSERT INTO
-tps.map_rm
-SELECT *
-FROM
-(VALUES 
-    ('PNCC', 'Parse ACH', 
+UPDATE tps.map_rm  
+SET regex =  
     $j$
     {
         "name":"Parse ACH",
@@ -128,18 +116,10 @@ FROM
         ]
     }
     $j$::jsonb
-    , 2)
-) x;
+WHERE target = 'Parse ACH';
 
-/*
-
-DELETE FROM tps.map_rm  where target = 'Parse Wires';
-INSERT INTO
-tps.map_rm
-SELECT *
-FROM
-(VALUES 
-    ('PNCC', 'Parse Wires', 
+UPDATE tps.map_rm  
+SET regex = 
     $j$
     {
         "name":"Parse Wires",
@@ -247,5 +227,105 @@ FROM
         ]
     }
     $j$::jsonb
-    , 2)
-) x;
+  WHERE target = 'Parse Wires';
+
+
+UPDATE tps.map_rm  
+SET regex = 
+    $j$
+        {
+            "name":"Trans Type",
+            "description":"extract intial description in conjunction with account name and transaction type for mapping",
+            "map": "yes",
+            "defn": [
+                {
+                    "key": "{AccountName}",
+                    "field": "acctn",
+                    "regex": "(.*)",
+                    "retain": "n"
+                },
+                {
+                    "key": "{Transaction}",
+                    "field": "trans",
+                    "regex": "(.*)",
+                    "retain": "n"
+                },
+                {
+                    "key": "{Description}",
+                    "field": "ini",
+                    "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)",
+                    "retain": "y"
+                }
+            ],
+            "where": [
+                {
+                }
+            ],
+            "function": "extract"
+        }
+    $j$::jsonb
+  WHERE target = 'Trans Type';
+
+
+UPDATE tps.map_rm  
+SET regex = 
+    $j$
+        {
+            "name":"Currency",
+            "description":"pull out currency indicators from description of misc items and map",
+            "map": "yes",
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "field": "ini",
+                    "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "field": "curr1",
+                    "regex": ".*(DEBIT|CREDIT).*(USD|CAD).*(?=DEBIT|CREDIT).*(?=USD|CAD).*",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "field": "curr2",
+                    "regex": ".*(?=DEBIT|CREDIT).*(?=USD|CAD).*(DEBIT|CREDIT).*(USD|CAD).*",
+                    "retain": "y"
+                }
+            ],
+            "where": [
+                {
+                    "Transaction": "Miscellaneous Credits"
+                },
+                {
+                    "Transaction": "Miscellaneous Debits"
+                }
+            ],
+            "function": "extract"
+        }
+    $j$::jsonb
+  WHERE target = 'Currency';
+
+UPDATE tps.map_rm  
+SET regex = 
+    $j$
+        {
+            "map": "yes",
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "field": "checkn",
+                    "regex": "[^0-9]*([0-9]*)\\s|$",
+                    "retain": "y"
+                }
+            ],
+            "where": [
+                {
+                    "Transaction": "Checks Paid"
+                }
+            ],
+            "function": "extract"
+        }
+    $j$::jsonb
+  WHERE target = 'Check Number';
