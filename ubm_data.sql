@@ -122,6 +122,10 @@ INSERT INTO trans_log (id, info) VALUES (2, '{"path": "C:\\users\\ptrowbridge\\d
 INSERT INTO trans_log (id, info) VALUES (3, '{"path": "C:\\users\\ptrowbridge\\downloads\\transsearchcsv(1).csv", "srce": "PNCC", "inserted": null, "time_stamp": "2017-10-25T10:08:11.443367-04:00", "not_inserted": [{"AsOfDate": "2017-10-19"}, {"AsOfDate": "2017-10-24"}, {"AsOfDate": "2017-10-20"}, {"AsOfDate": "2017-10-23"}, {"AsOfDate": "2017-10-18"}]}');
 INSERT INTO trans_log (id, info) VALUES (4, '{"path": "C:\\users\\ptrowbridge\\downloads\\llbal.csv", "srce": "PNCO", "inserted": [{"Loan#": "606780191", "Post Date": "2017-10-23", "Effective Date": "2017-10-23"}, {"Loan#": "606780191", "Post Date": "2017-10-24", "Effective Date": "2017-10-24"}], "time_stamp": "2017-10-25T10:13:37.760308-04:00", "not_inserted": [{"Loan#": "606780191", "Post Date": "2017-10-19", "Effective Date": "2017-10-19"}, {"Loan#": "606780191", "Post Date": "2017-10-18", "Effective Date": "2017-10-18"}, {"Loan#": "606780191", "Post Date": "2017-10-20", "Effective Date": "2017-10-20"}]}');
 INSERT INTO trans_log (id, info) VALUES (5, '{"path": "C:\\users\\ptrowbridge\\downloads\\llcol.csv", "srce": "PNCL", "inserted": [{"PostDate": "2017-10-24", "Schedule#": "01AR"}, {"PostDate": "2017-10-23", "Schedule#": "01AR"}], "time_stamp": "2017-10-25T10:14:10.004265-04:00", "not_inserted": [{"PostDate": "2017-10-18", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "05AR"}, {"PostDate": "2017-10-17", "Schedule#": "MR"}, {"PostDate": "2017-10-20", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "03IN Finished Goods"}, {"PostDate": "2017-10-17", "Schedule#": "04AR RS"}, {"PostDate": "2017-10-19", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "01AR"}, {"PostDate": "2017-10-17", "Schedule#": "06AR RS"}, {"PostDate": "2017-10-17", "Schedule#": "02IN Raw Material"}]}');
+INSERT INTO trans_log (id, info) VALUES (6, '{"path": "C:\\users\\ptrowbridge\\downloads\\ts.csv", "srce": "PNCC", "inserted": [{"AsOfDate": "2017-10-26"}, {"AsOfDate": "2017-10-25"}], "time_stamp": "2017-10-27T15:41:43.496243-04:00", "not_inserted": [{"AsOfDate": "2017-10-24"}, {"AsOfDate": "2017-10-20"}, {"AsOfDate": "2017-10-23"}]}');
+INSERT INTO trans_log (id, info) VALUES (7, '{"path": "C:\\users\\ptrowbridge\\downloads\\llbal.csv", "srce": "PNCO", "inserted": [{"Loan#": "606780191", "Post Date": "2017-10-26", "Effective Date": "2017-10-26"}, {"Loan#": "606780191", "Post Date": "2017-10-25", "Effective Date": "2017-10-25"}], "time_stamp": "2017-10-27T15:45:01.130597-04:00", "not_inserted": [{"Loan#": "606780191", "Post Date": "2017-10-23", "Effective Date": "2017-10-23"}, {"Loan#": "606780191", "Post Date": "2017-10-24", "Effective Date": "2017-10-24"}, {"Loan#": "606780191", "Post Date": "2017-10-20", "Effective Date": "2017-10-20"}]}');
+INSERT INTO trans_log (id, info) VALUES (8, '{"path": "C:\\users\\ptrowbridge\\downloads\\llcol.csv", "srce": "PNCL", "inserted": [{"PostDate": "2017-10-19", "Schedule#": "05AR"}, {"PostDate": "2017-10-19", "Schedule#": "MR"}, {"PostDate": "2017-10-26", "Schedule#": "01AR"}, {"PostDate": "2017-10-19", "Schedule#": "03IN Finished Goods"}, {"PostDate": "2017-10-25", "Schedule#": "01AR"}, {"PostDate": "2017-10-19", "Schedule#": "04AR RS"}, {"PostDate": "2017-10-19", "Schedule#": "06AR RS"}, {"PostDate": "2017-10-19", "Schedule#": "02IN Raw Material"}], "time_stamp": "2017-10-27T15:45:23.417705-04:00", "not_inserted": [{"PostDate": "2017-10-20", "Schedule#": "01AR"}, {"PostDate": "2017-10-24", "Schedule#": "01AR"}, {"PostDate": "2017-10-23", "Schedule#": "01AR"}, {"PostDate": "2017-10-19", "Schedule#": "01AR"}]}');
+INSERT INTO trans_log (id, info) VALUES (9, '{"path": "C:\\users\\ptrowbridge\\downloads\\pt_oct.csv", "srce": "ADPRP", "inserted": [{"adp_comp": "B3X", "pay_date": "171006"}, {"adp_comp": "UDV", "pay_date": "171013"}, {"adp_comp": "UDV", "pay_date": "171027"}, {"adp_comp": "U7E", "pay_date": "171013"}, {"adp_comp": "U7E", "pay_date": "171027"}, {"adp_comp": "UDV", "pay_date": "171020"}, {"adp_comp": "U7C", "pay_date": "171020"}, {"adp_comp": "U7C", "pay_date": "171027"}, {"adp_comp": "U7C", "pay_date": "171013"}, {"adp_comp": "U7C", "pay_date": "171006"}, {"adp_comp": "B3X", "pay_date": "171020"}, {"adp_comp": "U7H", "pay_date": "171027"}, {"adp_comp": "U7J", "pay_date": "171027"}, {"adp_comp": "B3X", "pay_date": "171027"}, {"adp_comp": "U7J", "pay_date": "171013"}, {"adp_comp": "U7H", "pay_date": "171013"}, {"adp_comp": "B3X", "pay_date": "171013"}, {"adp_comp": "UDV", "pay_date": "171006"}], "time_stamp": "2017-10-27T16:01:46.991437-04:00", "not_inserted": null}');
 
 
 SET search_path = evt, pg_catalog;
@@ -139,14 +143,14 @@ SET search_path = tps, pg_catalog;
 -- Name: trans_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_id_seq', 1544252, true);
+SELECT pg_catalog.setval('trans_id_seq', 1598531, true);
 
 
 --
 -- Name: trans_log_id_seq; Type: SEQUENCE SET; Schema: tps; Owner: -
 --
 
-SELECT pg_catalog.setval('trans_log_id_seq', 5, true);
+SELECT pg_catalog.setval('trans_log_id_seq', 9, true);
 
 
 --
