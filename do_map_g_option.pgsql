@@ -76,7 +76,8 @@ FROM
         m.regex->>'function' = 'extract'
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
---WHERE
+WHERE
+    t.allj IS NULL
     --t.srce = 'PNCC'
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
