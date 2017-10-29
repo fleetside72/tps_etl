@@ -1,0 +1,1 @@
+the journal module is fine forvbasic items, but when entering recipts, a single item has two entries but they are hard to match up. this could be solved by creating a separate schema module that has a head, item, the glbsub items for each main item.
