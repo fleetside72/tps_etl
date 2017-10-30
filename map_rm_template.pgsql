@@ -465,3 +465,46 @@ SET regex =
         }
     $j$::jsonb
   WHERE target = 'Check Number';
+
+  
+UPDATE tps.map_rm  
+SET regex = 
+    $j$
+    {
+        "name":"ADP Codes",
+        "description":"link to adp code definitions",
+        "defn": [
+            {
+                "key": "{gl_descr}",
+                "field": "gl_descr",
+                "regex": ".*",
+                "flag":"",
+                "retain":"n",
+                "map":"y"
+            },
+            {
+                "key": "{prim_offset}",
+                "field": "prim_offset",
+                "regex": ".*",
+                "flag":"",
+                "retain":"n",
+                "map":"y"
+            },
+            {
+                "key": "{pay_date}",
+                "field": "pay_month",
+                "regex": ".{1,4}",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            }
+        ],
+        "function":"extract",
+        "where": [
+            {
+            }
+        ]
+    }
+    $j$::jsonb
+WHERE 
+    target = 'ADP Codes';
