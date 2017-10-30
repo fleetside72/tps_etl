@@ -25,17 +25,18 @@ SET regex =
     $j$::jsonb
 WHERE 
     target = 'Strip Amount Commas';
+    
 
 UPDATE tps.map_rm  
 SET regex =  
     $j$
     {
-        "name":"Parse ACH",
+        "name":"Parse ACH Credits",
         "description":"parse select components of the description for ACH Credits Receieved",
         "defn": [
             {
                 "key": "{Description}",
-                "field":"Comp Name",
+                "field":"beneficiary",
                 "regex": "Comp Name:(.+?)(?=\\d{6} Com|SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
                 "flag":"",
                 "retain":"y",
@@ -59,7 +60,7 @@ SET regex =
             },
             {
                 "key": "{Description}",
-                "field":"Cust Name",
+                "field":"originator",
                 "regex": "Cust Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
                 "flag":"",
                 "retain":"y",
@@ -118,14 +119,110 @@ SET regex =
         "where": [
             {
                 "Transaction":"ACH Credits"
+            }
+        ]
+    }
+    $j$::jsonb
+WHERE target = 'Parse ACH Credits';
+
+
+UPDATE tps.map_rm  
+SET regex =  
+    $j$
+    {
+        "name":"Parse ACH Debits",
+        "description":"parse select components of the description for ACH Credits Receieved",
+        "defn": [
+            {
+                "key": "{Description}",
+                "field":"originator",
+                "regex": "Comp Name:(.+?)(?=\\d{6} Com|SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
             },
+            {
+                "key": "{Description}",
+                "field":"Cust ID",
+                "regex": "Cust ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Desc",
+                "regex": "Desc:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"beneficiary",
+                "regex": "Cust Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Batch Discr",
+                "regex": "Batch Discr:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Comp ID",
+                "regex": "Comp ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Addenda",
+                "regex": "Addenda:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"SETT",
+                "regex": "SETT:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Date",
+                "regex": "Date:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field":"Time",
+                "regex": "Time:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            }
+        ],
+        "function":"extract",
+        "where": [
             {
                 "Transaction":"ACH Debits"
             }
         ]
     }
     $j$::jsonb
-WHERE target = 'Parse ACH';
+WHERE target = 'Parse ACH Debits';
 
 UPDATE tps.map_rm  
 SET regex = 
@@ -154,6 +251,22 @@ SET regex =
                 "key": "{Description}",
                 "field": "originator_components",
                 "regex": "ORIGINATOR:(.*?)AC/(\\d*) (.*)(?=[A-Z]{3,}?:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field": "beneficiary",
+                "regex": "BENEFICIARY:(.*?)AC/\\d* .*(?=[A-Z]{3,}?:|$)",
+                "flag":"",
+                "retain":"y",
+                "map":"n"
+            },
+            {
+                "key": "{Description}",
+                "field": "originator",
+                "regex": "ORIGINATOR:(.*?)AC/\\d* .*(?=[A-Z]{3,}?:|$)",
                 "flag":"",
                 "retain":"y",
                 "map":"n"
