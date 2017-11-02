@@ -1,3 +1,4 @@
+\timing
 SELECT
     t.srce
     ,(ae.e::text[])[1] unq_constr
