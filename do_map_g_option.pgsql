@@ -9,25 +9,26 @@ SELECT
     t.id,
     t.rec,
     m.target,
-    regex->>'map' map_intention,
+    m.seq,
     regex->>'function' regex_function,
     e.v ->> 'field' result_key_name,
     e.v ->> 'key' target_json_path,
     e.v ->> 'flag' regex_options_flag,
+    e.v->>'map' map_intention,
     e.v->>'retain' retain_result,
     e.v->>'regex' regex_expression,
     e.rn target_item_number,
     COALESCE(mt.rn,rp.rn,1) result_number,
     mt.mt rx_match,
     rp.rp rx_replace,
-    CASE regex->>'map'
-        WHEN 'yes' THEN
+    CASE e.v->>'map'
+        WHEN 'y' THEN
             e.v->>'field'
         ELSE
             null
     END map_key,
-    CASE regex->>'map'
-        WHEN 'yes' THEN
+    CASE e.v->>'map'
+        WHEN 'y' THEN
             CASE regex->>'function'
                 WHEN 'extract' THEN
                     CASE WHEN array_upper(mt.mt,1)=1 
@@ -76,9 +77,9 @@ FROM
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
 WHERE
+    t.allj IS NULL
     --t.srce = 'PNCC'
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
-    t.map IS NULL
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
     t.id DESC,
@@ -87,13 +88,15 @@ ORDER BY
     COALESCE(mt.rn,rp.rn,1)
 )
 
---SELECT * FROM rx
+--SELECT count(*) FROM rx LIMIT 100
+
 
 , agg_to_target_items AS (
 SELECT 
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,regex_function
     ,target_item_number
@@ -133,6 +136,7 @@ GROUP BY
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,regex_function
     ,target_item_number
@@ -142,13 +146,15 @@ GROUP BY
     ,retain_key
 )
 
---SELECT * FROM agg_to_target_items
+--SELECT * FROM agg_to_target_items LIMIT 100
+
 
 , agg_to_target AS (
 SELECT
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
     ,tps.jsonb_concat_obj(COALESCE(map_val,'{}'::JSONB)) map_val
     ,jsonb_strip_nulls(tps.jsonb_concat_obj(COALESCE(retain_val,'{}'::JSONB))) retain_val
@@ -158,6 +164,7 @@ GROUP BY
     srce
     ,id
     ,target
+    ,seq
     ,map_intention
 ORDER BY
     id
@@ -172,6 +179,7 @@ SELECT
     a.srce
     ,a.id
     ,a.target
+    ,a.seq
     ,a.map_intention
     ,a.map_val
     ,a.retain_val retain_value
@@ -190,7 +198,7 @@ FROM
 SELECT
     srce
     ,id
-    ,tps.jsonb_concat_obj(COALESCE(retain_value,'{}'::jsonb)) retain_val
+    ,tps.jsonb_concat_obj(COALESCE(retain_value,'{}'::jsonb) ORDER BY seq DESC) retain_val
     ,tps.jsonb_concat_obj(COALESCE(map,'{}'::jsonb)) map
 FROM
     link_map
@@ -199,7 +207,8 @@ GROUP BY
     ,id
 )
 
-SELECT srce, id, jsonb_pretty(retain_val), jsonb_pretty(map) FROM agg_to_id
+--SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
+
 
 
 UPDATE
