@@ -150,7 +150,7 @@ FROM
     $j$::jsonb
     , 2)
 ) x;
-*/
+
 DELETE FROM tps.map_rm  where target = 'Parse ACH';
 
 INSERT INTO
@@ -249,3 +249,31 @@ FROM
     $j$::jsonb
     , 2)
 ) x;
+*/
+
+UPDATE  
+    tps.map_rm
+SET 
+    regex = 
+    $j$
+    {
+        "name":"First 20",
+        "description":"pull first 20 characters from description for mapping",
+        "defn": [
+            {
+                "key": "{Memo}",
+                "field":"f20",
+                "regex": ".{1,20}",
+                "flag":"",
+                "retain":"y"
+            }
+        ],
+        "function":"extract",
+        "map":"yes",
+        "where": [
+            {
+            }
+        ]
+    }
+    $j$::jsonb
+WHERE srce = 'HUNT'

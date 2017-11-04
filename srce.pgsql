@@ -16,21 +16,13 @@ DECLARE _t text;
 DECLARE _c text;
 DECLARE _path text;
 DECLARE _srce text;
-<<<<<<< HEAD
-
-BEGIN
-
-    _path := 'C:\users\fleet\downloads\d1026.csv';
-    _srce := 'DCARD';
-=======
 DECLARE _log_info text;
 DECLARE _log_id text;
 
 BEGIN
 
-    _path := 'C:\users\ptrowbridge\downloads\llcol.csv';
-    _srce := 'PNCL';
->>>>>>> wk
+    _path := 'C:\users\fleet\downloads\discover-recentactivity-20171031.csv';
+    _srce := 'DCARD';
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
