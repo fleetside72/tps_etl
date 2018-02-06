@@ -441,6 +441,13 @@ CREATE INDEX trans_rec ON trans USING gin (rec);
 
 
 --
+-- Name: trans_srce; Type: INDEX; Schema: tps; Owner: -
+--
+
+CREATE INDEX trans_srce ON trans USING btree (srce);
+
+
+--
 -- Name: map_rm map_rm_fk_srce; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 

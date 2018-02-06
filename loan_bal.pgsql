@@ -6,9 +6,9 @@ FROM
     tps.trans
     LEFT JOIN LATERAL jsonb_populate_record(null::tps.pnco, rec) r ON TRUE
 WHERE 
-    rec @> '{"Loan#":"606780191"}' 
+    rec @> '{"Loan#":"606780281"}' 
 ORDER BY 
     r."Loan#"
-    ,r."Post Date" asc
-    ,rec->>'id' asc
-    ,r."Reference #" asc
+    ,r."Post Date" ASC
+    ,rec->>'id' ASC
+    ,r."Reference #" ASC
