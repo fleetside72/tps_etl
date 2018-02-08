@@ -1,6 +1,6 @@
 \timing
-
-CREATE OR REPLACE FUNCTION tps.srce_edit(_path text, _srce text) RETURNS text
+DROP FUNCTION tps.srce_import(_path text, _srce text);
+CREATE OR REPLACE FUNCTION tps.srce_import(_path text, _srce text) RETURNS jsonb
 
 /*--------------------------------------------------------
 0. load target import to temp table
@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION tps.srce_edit(_path text, _srce text) RETURNS text
 4. insert pending records associated with keys that are not already in trans
 5. insert summary to log table
 */---------------------------------------------------------
+
+--to-do
+--return infomation to a client via json or composite type
+
 
 AS $f$
 DECLARE _t text;
