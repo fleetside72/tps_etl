@@ -21,7 +21,7 @@ DECLARE _log_id text;
 
 BEGIN
 
-    _path := 'C:\users\fleet\downloads\discover-recentactivity-20171031.csv';
+    _path := 'C:\users\ptrowbridge\documents\tps_etl\sample_discovercard\data.csv';
     _srce := 'DCARD';
 	
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
@@ -80,7 +80,7 @@ BEGIN
 
     ,pending_list AS (
         SELECT
-            jsonb_extract(
+            tps.jsonb_extract(
                     row_to_json(i)::jsonb
                     ,ext.text_array
             ) json_key,

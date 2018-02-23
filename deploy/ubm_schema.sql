@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.2
--- Dumped by pg_dump version 10.2
+-- Dumped from database version 10rc1
+-- Dumped by pg_dump version 10rc1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -78,6 +78,28 @@ BEGIN
 	--RAISE notice 'state is %', state;
 	--RAISE notice 'concat is %', concat;
 	RETURN state || concat;
+END;
+$$;
+
+
+--
+-- Name: jsonb_extract(jsonb, text[]); Type: FUNCTION; Schema: tps; Owner: -
+--
+
+CREATE FUNCTION jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	t text[];
+	j jsonb := '{}'::jsonb;
+	
+BEGIN
+	FOREACH t SLICE 1 IN ARRAY key_list LOOP
+		--RAISE NOTICE '%', t;
+		--RAISE NOTICE '%', t[1];
+		j := j || jsonb_build_object(t[1],rec#>t);
+	END LOOP;
+	RETURN j;
 END;
 $$;
 
