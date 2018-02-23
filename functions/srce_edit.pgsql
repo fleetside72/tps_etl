@@ -29,7 +29,7 @@ BEGIN
     IF _cnt > 0 THEN
         _conflict = TRUE;
         --get out of the function somehow
-        _message: = 
+        _message = 
         $$
                 {
                     "message":"transactions already exist under source profile, cannot change the definition"
@@ -47,10 +47,18 @@ BEGIN
         tps.srce
     SELECT
         _name, _defn
-    ON CONFLICT DO UPDATE
+    ON CONFLICT ON CONSTRAINT srce_pkey DO UPDATE
         SET
             defn = _defn;
 
+    _message = 
+        $$
+                {
+                    "message":"definition set"
+                    ,"status":"success"
+                }
+        $$::jsonb;
+    return _message;
 
 END;
 $f$
