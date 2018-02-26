@@ -91,6 +91,51 @@ screen builds json
         }
     }
 
+SQL
+---------------------------------------
+SELECT 
+    jsonb_pretty(r.x) 
+FROM
+    tps.srce_set(
+    'DCARD',
+    $$
+    {
+        "name": "DCARD",
+        "type": "csv",
+        "schema": [
+            {
+                "key": "Trans. Date",
+                "type": "date"
+            },
+            {
+                "key": "Post Date",
+                "type": "date"
+            },
+            {
+                "key": "Description",
+                "type": "text"
+            },
+            {
+                "key": "Amount",
+                "type": "numeric"
+            },
+            {
+                "key": "Category",
+                "type": "text"
+            }
+        ],
+        "unique_constraint": {
+            "type": "key",
+            "fields": [
+                "{Post Date}",
+                "{Trans. Date}",
+                "{Description}"
+            ]
+        }
+    }
+    $$
+) r(x)
+
 backend handles SQL
 -----------------------------------
 

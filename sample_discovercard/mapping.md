@@ -77,6 +77,33 @@ map definition
         "description": "pull first 20 characters from description for mapping"
     }
 
+SQL
+---------------------------------------------
+INSERT INTO
+    tps.map_rm
+SELECT
+    'DCARD',
+    'First 20',
+    $$    {
+        "defn": [
+            {
+                "key": "{Description}",
+                "map": "y",
+                "flag": "g",
+                "field": "f20",
+                "regex": ".{1,20}",
+                "retain": "y"
+            }
+        ],
+        "name": "First 20",
+        "where": [
+            {"Category":"Restaurantes"},
+            {"Category":"Services"}
+        ],
+        "function": "extract",
+        "description": "pull first 20 characters from description for mapping"
+    } $$::jsonb,
+    1
 
 
 assign new key/values to the results of the regular expression, and then back to the underlying row it came from
