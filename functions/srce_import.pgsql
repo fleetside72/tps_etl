@@ -18,14 +18,43 @@ CREATE OR REPLACE FUNCTION tps.srce_import(_path text, _srce text) RETURNS jsonb
 AS $f$
 DECLARE _t text;
 DECLARE _c text;
-DECLARE _log_info text;
+DECLARE _log_info jsonb;
 DECLARE _log_id text;
+DECLARE _cnt numeric;
+DECLARE _message jsonb;
+_MESSAGE_TEXT text;
+_PG_EXCEPTION_DETAIL text;
+_PG_EXCEPTION_HINT text;
 
 BEGIN
 
-    _path := 'C:\users\fleet\downloads\discover-recentactivity-20171031.csv';
-    _srce := 'DCARD';
-	
+    --_path := 'C:\users\fleet\downloads\discover-recentactivity-20171031.csv';
+    --_srce := 'DCARD';
+
+----------------------------------------------------test if source exists----------------------------------------------------------------------------------
+
+    SELECT
+        COUNT(*)
+    INTO
+        _cnt
+    FROM
+        tps.srce    
+    WHERE
+        srce = _srce;
+
+    IF _cnt = 0 THEN
+        _message:= 
+        format(
+            $$
+                {
+                    "status":"fail",
+                    "message":"source %L does not exists"
+                }
+            $$,
+            _srce
+        )::jsonb;
+        RETURN _message;
+    END IF;
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
 	SELECT
@@ -60,7 +89,24 @@ BEGIN
 
     --RAISE NOTICE '%', _t;
 
-    EXECUTE _t;
+    BEGIN
+        EXECUTE _t;
+    EXCEPTION WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            _MESSAGE_TEXT = MESSAGE_TEXT,
+            _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
+            _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
+        _message:= 
+        ($$
+            {
+                "status":"fail",
+                "message":"error importing data"
+            }
+        $$::jsonb)
+        ||jsonb_build_object('message_text',_MESSAGE_TEXT)
+        ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
+        return _message;
+    END;
 
     WITH 
 
@@ -191,8 +237,20 @@ BEGIN
     FROM
         logged;
 
-    RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
+    --RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
 
+    _message:= 
+    (
+        format(
+        $$
+            {
+            "status":"complete",
+            "message":"import of %L for source %L complete"
+            }
+        $$, _path, _srce)::jsonb
+    )||josnb_build_object('details',_log_info);
+
+    RETURN _message;
 END
 $f$
 LANGUAGE plpgsql
