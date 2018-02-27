@@ -223,7 +223,7 @@ BEGIN
 
     ,pending_list AS (
         SELECT
-            jsonb_extract(
+            tps.jsonb_extract(
                     row_to_json(i)::jsonb
                     ,ext.text_array
             ) json_key,
@@ -343,7 +343,7 @@ BEGIN
             "message":"import of %L for source %L complete"
             }
         $$, _path, _srce)::jsonb
-    )||josnb_build_object('details',_log_info);
+    )||jsonb_build_object('details',_log_info);
 
     RETURN _message;
 END
