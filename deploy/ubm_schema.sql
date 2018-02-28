@@ -31,6 +31,19 @@ COMMENT ON SCHEMA tps IS 'third party source';
 SET search_path = tps, pg_catalog;
 
 --
+-- Name: DCARD; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE "DCARD" AS (
+	"Trans. Date" date,
+	"Post Date" date,
+	"Description" text,
+	"Amount" numeric,
+	"Category" text
+);
+
+
+--
 -- Name: dcard; Type: TYPE; Schema: tps; Owner: -
 --
 
@@ -362,6 +375,7 @@ DECLARE
 _cnt int;
 _conflict BOOLEAN;
 _message jsonb;
+_sql text;
 
 BEGIN
 
@@ -395,10 +409,11 @@ BEGIN
         return _message;
     END IF;
 
-    /*-----------------schema validation---------------------
-    yeah dont feel like it right now
+    /*-------------------------------------------------------
+    schema validation
     ---------------------------------------------------------*/
     
+    -------------------insert definition----------------------------------------
     INSERT INTO
         tps.srce
     SELECT
@@ -407,6 +422,31 @@ BEGIN
         SET
             defn = _defn;
 
+    ------------------drop existing type-----------------------------------------
+
+    EXECUTE format('DROP TYPE IF EXISTS tps.%I',_name);
+
+    ------------------create new type--------------------------------------------
+
+    SELECT
+        string_agg(quote_ident(prs.key)||' '||prs.type,',')
+    INTO
+        _sql
+    FROM 
+        tps.srce
+        --unwrap the schema definition array
+        LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
+    WHERE   
+        srce = _name
+    GROUP BY
+        srce;
+
+    RAISE NOTICE 'CREATE TYPE tps.% AS (%)',_name,_sql;
+
+    EXECUTE format('CREATE TYPE tps.%I AS (%s)',_name,_sql);
+
+    ----------------set message-----------------------------------------------------
+    
     _message = 
         $$
                 {
