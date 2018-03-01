@@ -79,11 +79,12 @@ map definition
 
 SQL
 ---------------------------------------------
-INSERT INTO
-    tps.map_rm
-SELECT
-    'DCARD',
-    'First 20',
+select 
+	x.x
+from
+	TPS.srce_map_def_set(
+    'DCARD'::text,
+    'First 20'::text,
     $$    {
         "defn": [
             {
@@ -103,7 +104,8 @@ SELECT
         "function": "extract",
         "description": "pull first 20 characters from description for mapping"
     } $$::jsonb,
-    1
+    1::int
+    ) x(x)
 
 
 assign new key/values to the results of the regular expression, and then back to the underlying row it came from
