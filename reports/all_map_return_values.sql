@@ -1,4 +1,4 @@
-
+EXPLAIN
 WITH
 
 --------------------apply regex operations to transactions---------------------------------------------------------------------------------
@@ -73,13 +73,13 @@ FROM
     --------------------------start with all regex maps------------------------------------------------------------------------------------
     tps.map_rm m
     --------------------------isolate matching basis to limit map to only look at certain json---------------------------------------------
-    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+    JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+    --------------------------break out array of regluar expressions in the map------------------------------------------------------------
+    JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
     --------------------------join to main transaction table but only certain key/values are included--------------------------------------
     INNER JOIN tps.trans t ON 
         t.srce = m.srce AND
         t.rec @> w.v
-    --------------------------break out array of regluar expressions in the map------------------------------------------------------------
-    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
     --------------------------each regex references a path to the target value, extract the target from the reference and do regex---------
     LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
         m.regex->>'function' = 'extract'
@@ -88,7 +88,7 @@ FROM
         m.regex->>'function' = 'replace'
 WHERE
     --t.allj IS NULL
-    t.srce = 'PNCC' AND
+    --t.srce = 'PNCC' AND
     e.v @> '{"map":"y"}'::jsonb
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
@@ -177,12 +177,11 @@ GROUP BY
     ,target
     ,seq
     ,map_intention
-ORDER BY
-    id
 )
 
 
-SELECT 
+, agg_to_ret AS (
+SELECT
 	srce
 	,target
 	,seq
@@ -199,8 +198,41 @@ GROUP BY
 	,map_intention
 	,map_val
 	,retain_val
+)
+
+, link_map AS (
+SELECT
+    a.srce
+    ,a.target
+    ,a.seq
+    ,a.map_intention
+    ,a.map_val
+    ,a."count"
+    ,a.retain_val
+    ,v.map mapped_val
+FROM
+    agg_to_ret a
+    LEFT OUTER JOIN tps.map_rv v ON
+        v.srce = a.srce AND
+        v.target = a.target AND
+        v.retval = a.map_val
+)
+
+SELECT
+    l.srce
+    ,l.target
+    ,l.seq
+    ,l.map_intention
+    ,l.map_val
+    ,l."count"
+    ,l.retain_val
+    ,l.mapped_val
+FROM
+    link_map l
 ORDER BY
-    srce
-    ,seq
-    ,target
-    ,count(*) DESC
+    l.srce
+    ,l.target
+    ,l.seq
+    ,l."count"
+    ,l.map_val
+    ,l.mapped_val
