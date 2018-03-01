@@ -1,4 +1,9 @@
-EXPLAIN
+/*
+first get distinct target json values
+then apply regex
+*/
+
+
 WITH
 
 --------------------apply regex operations to transactions---------------------------------------------------------------------------------
@@ -92,11 +97,13 @@ WHERE
     e.v @> '{"map":"y"}'::jsonb
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
+/*
 ORDER BY 
     t.id DESC,
     m.target,
     e.rn,
     COALESCE(mt.rn,rp.rn,1)
+*/
 )
 
 --SELECT * FROM rx LIMIT 100
