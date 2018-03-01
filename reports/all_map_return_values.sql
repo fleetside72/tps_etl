@@ -1,7 +1,7 @@
 
 WITH
 
---------------------apply regex operations to transactions-----------------------------------------------------------------------------------
+--------------------apply regex operations to transactions---------------------------------------------------------------------------------
 
 rx AS (
 SELECT 
@@ -21,12 +21,14 @@ SELECT
     COALESCE(mt.rn,rp.rn,1) result_number,
     mt.mt rx_match,
     rp.rp rx_replace,
+    --------------------------json key name assigned to return value-----------------------------------------------------------------------
     CASE e.v->>'map'
         WHEN 'y' THEN
             e.v->>'field'
         ELSE
             null
     END map_key,
+    --------------------------json value resulting from regular expression-----------------------------------------------------------------
     CASE e.v->>'map'
         WHEN 'y' THEN
             CASE regex->>'function'
@@ -43,12 +45,14 @@ SELECT
         ELSE
             NULL
     END map_val,
+    --------------------------flag for if retruned regex result is stored as a new part of the final json output---------------------------
     CASE e.v->>'retain'
         WHEN 'y' THEN
             e.v->>'field'
         ELSE
             NULL
     END retain_key,
+    --------------------------push regex result into json object---------------------------------------------------------------------------
     CASE e.v->>'retain'
         WHEN 'y' THEN
             CASE regex->>'function'
@@ -66,19 +70,26 @@ SELECT
             NULL
     END retain_val
 FROM 
+    --------------------------start with all regex maps------------------------------------------------------------------------------------
     tps.map_rm m
+    --------------------------isolate matching basis to limit map to only look at certain json---------------------------------------------
     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+    --------------------------join to main transaction table but only certain key/values are included--------------------------------------
     INNER JOIN tps.trans t ON 
         t.srce = m.srce AND
         t.rec @> w.v
+    --------------------------break out array of regluar expressions in the map------------------------------------------------------------
     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
+    --------------------------each regex references a path to the target value, extract the target from the reference and do regex---------
     LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
         m.regex->>'function' = 'extract'
+    --------------------------same as above but for a replacement type function------------------------------------------------------------
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
 WHERE
     --t.allj IS NULL
-    t.srce = 'DCARD'
+    t.srce = 'PNCC' AND
+    e.v @> '{"map":"y"}'::jsonb
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
 ORDER BY 
@@ -181,10 +192,15 @@ SELECT
 	,count(*) "count"
 FROM 
 	agg_to_target
-group BY
+GROUP BY
 	srce
 	,target
 	,seq
 	,map_intention
 	,map_val
 	,retain_val
+ORDER BY
+    srce
+    ,seq
+    ,target
+    ,count(*) DESC
