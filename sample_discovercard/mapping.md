@@ -79,10 +79,10 @@ map definition
 
 SQL
 ---------------------------------------------
-select 
+SELECT
 	x.x
-from
-	TPS.srce_map_def_set(
+FROM
+	tps.srce_map_def_set(
     'DCARD'::text,
     'First 20'::text,
     $$    {
@@ -90,7 +90,7 @@ from
             {
                 "key": "{Description}",
                 "map": "y",
-                "flag": "g",
+                "flag": "",
                 "field": "f20",
                 "regex": ".{1,20}",
                 "retain": "y"
@@ -121,3 +121,24 @@ assign new key/values to the results of the regular expression, and then back to
 | {"f20": "98626 - 200 PUBLIC S"} | Public Sq Parking | Recreation    |        |         |     |
 | {"f20": "ACE HARDWARE HUDSON "} | Ace Hardware      | Home Maint    | Hudson | Ohio    |     |
 | {"f20": "ACH CAFE AND STARBUC"} | Starbucks         | Restaurantes  |        |         |     |
+
+
+function call to setup a a new map value
+---------------------------------------------
+SELECT
+    x.message
+FROM
+    tps.srce_map_val_set(
+        'DCARD'
+        ,'First 20'
+        ,'{"f20": "DISCOUNT DRUG MART 3"}'::JSONB
+        ,'{"party":"Discount Drug Mart","reason":"groceries"}'::JSONB
+    ) x(message);
+
+function call to re-run all the maps for a source
+----------------------------------------------------
+
+SELECT
+    x.message
+FROM
+    tps.srce_map_overwrite('DCARD') x(message);
