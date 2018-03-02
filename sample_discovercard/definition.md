@@ -146,3 +146,10 @@ backend handles SQL
 handle json_return_value
 * insert: notify and clear? update list of sources on screen?
 * could not insert: print reason from json
+
+import the data
+------------------------------------
+SELECT
+    *
+FROM
+    tps.srce_import('C:\users\fleet\documents\tps_etl\sample_discovercard\data.csv','DCARD') x(message)
