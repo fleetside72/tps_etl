@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.2
--- Dumped by pg_dump version 10.2
+-- Dumped from database version 10rc1
+-- Dumped by pg_dump version 10rc1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -858,6 +858,13 @@ CREATE TABLE map_rm (
 
 
 --
+-- Name: TABLE map_rm; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TABLE map_rm IS 'regex instructions';
+
+
+--
 -- Name: map_rv; Type: TABLE; Schema: tps; Owner: -
 --
 
@@ -867,6 +874,13 @@ CREATE TABLE map_rv (
     retval jsonb NOT NULL,
     map jsonb
 );
+
+
+--
+-- Name: TABLE map_rv; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TABLE map_rv IS 'map return value assignemnt';
 
 
 --
@@ -880,6 +894,13 @@ CREATE TABLE srce (
 
 
 --
+-- Name: TABLE srce; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TABLE srce IS 'source master listing and definition';
+
+
+--
 -- Name: trans; Type: TABLE; Schema: tps; Owner: -
 --
 
@@ -889,8 +910,16 @@ CREATE TABLE trans (
     rec jsonb,
     parse jsonb,
     map jsonb,
-    allj jsonb
+    allj jsonb,
+    logid bigint
 );
+
+
+--
+-- Name: TABLE trans; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TABLE trans IS 'source records';
 
 
 --
@@ -915,6 +944,13 @@ CREATE TABLE trans_log (
     id integer NOT NULL,
     info jsonb
 );
+
+
+--
+-- Name: TABLE trans_log; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TABLE trans_log IS 'import event information';
 
 
 --
@@ -983,6 +1019,13 @@ CREATE INDEX trans_allj ON trans USING gin (allj);
 --
 
 CREATE INDEX trans_rec ON trans USING gin (rec);
+
+
+--
+-- Name: trans_srce; Type: INDEX; Schema: tps; Owner: -
+--
+
+CREATE INDEX trans_srce ON trans USING btree (srce);
 
 
 --
