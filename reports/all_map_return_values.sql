@@ -240,6 +240,6 @@ ORDER BY
     l.srce
     ,l.target
     ,l.seq
-    ,l."count"
+    ,l."count" desc
     ,l.map_val
     ,l.mapped_val
