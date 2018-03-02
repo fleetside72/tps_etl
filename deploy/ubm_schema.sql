@@ -31,6 +31,19 @@ COMMENT ON SCHEMA tps IS 'third party source';
 SET search_path = tps, pg_catalog;
 
 --
+-- Name: DCARD; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE "DCARD" AS (
+	"Trans. Date" date,
+	"Post Date" date,
+	"Description" text,
+	"Amount" numeric,
+	"Category" text
+);
+
+
+--
 -- Name: dcard; Type: TYPE; Schema: tps; Owner: -
 --
 
@@ -351,6 +364,62 @@ $_$;
 
 
 --
+-- Name: srce_map_def_set(text, text, jsonb, integer); Type: FUNCTION; Schema: tps; Owner: -
+--
+
+CREATE FUNCTION srce_map_def_set(_srce text, _map text, _defn jsonb, _seq integer) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $_$
+
+DECLARE
+    _message jsonb;
+    _MESSAGE_TEXT text;
+    _PG_EXCEPTION_DETAIL text;
+    _PG_EXCEPTION_HINT text;
+
+BEGIN
+
+    BEGIN
+
+        INSERT INTO
+            tps.map_rm
+        SELECT
+            _srce
+            ,_map
+            ,_defn
+            ,_seq
+        ON CONFLICT ON CONSTRAINT map_rm_pk DO UPDATE SET
+            srce = _srce
+            ,target = _map
+            ,regex = _defn
+            ,seq = _seq;
+
+    EXCEPTION WHEN OTHERS THEN
+
+        GET STACKED DIAGNOSTICS 
+                _MESSAGE_TEXT = MESSAGE_TEXT,
+                _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
+                _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
+            _message:= 
+            ($$
+                {
+                    "status":"fail",
+                    "message":"error setting definition"
+                }
+            $$::jsonb)
+            ||jsonb_build_object('message_text',_MESSAGE_TEXT)
+            ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
+            return _message;
+    END;
+
+    _message:= jsonb_build_object('status','complete','message','definition has been set');
+    return _message;
+
+END;
+$_$;
+
+
+--
 -- Name: srce_set(text, jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --
 
@@ -362,6 +431,7 @@ DECLARE
 _cnt int;
 _conflict BOOLEAN;
 _message jsonb;
+_sql text;
 
 BEGIN
 
@@ -395,10 +465,11 @@ BEGIN
         return _message;
     END IF;
 
-    /*-----------------schema validation---------------------
-    yeah dont feel like it right now
+    /*-------------------------------------------------------
+    schema validation
     ---------------------------------------------------------*/
     
+    -------------------insert definition----------------------------------------
     INSERT INTO
         tps.srce
     SELECT
@@ -407,6 +478,31 @@ BEGIN
         SET
             defn = _defn;
 
+    ------------------drop existing type-----------------------------------------
+
+    EXECUTE format('DROP TYPE IF EXISTS tps.%I',_name);
+
+    ------------------create new type--------------------------------------------
+
+    SELECT
+        string_agg(quote_ident(prs.key)||' '||prs.type,',')
+    INTO
+        _sql
+    FROM 
+        tps.srce
+        --unwrap the schema definition array
+        LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
+    WHERE   
+        srce = _name
+    GROUP BY
+        srce;
+
+    RAISE NOTICE 'CREATE TYPE tps.% AS (%)',_name,_sql;
+
+    EXECUTE format('CREATE TYPE tps.%I AS (%s)',_name,_sql);
+
+    ----------------set message-----------------------------------------------------
+    
     _message = 
         $$
                 {
