@@ -58,6 +58,7 @@ screen builds json
 
     {
         "name": "DCARD",
+        "description":"Discover Card",
         "type": "csv",
         "schema": [
             {
@@ -101,6 +102,7 @@ FROM
     $$
     {
         "name": "DCARD",
+        "description":"Discover Card",
         "type": "csv",
         "schema": [
             {

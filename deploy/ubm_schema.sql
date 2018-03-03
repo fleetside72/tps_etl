@@ -2,14 +2,15 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10rc1
--- Dumped by pg_dump version 10rc1
+-- Dumped from database version 10.3
+-- Dumped by pg_dump version 10.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'WIN1252';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
@@ -28,13 +29,11 @@ CREATE SCHEMA tps;
 COMMENT ON SCHEMA tps IS 'third party source';
 
 
-SET search_path = tps, pg_catalog;
-
 --
 -- Name: DCARD; Type: TYPE; Schema: tps; Owner: -
 --
 
-CREATE TYPE "DCARD" AS (
+CREATE TYPE tps."DCARD" AS (
 	"Trans. Date" date,
 	"Post Date" date,
 	"Description" text,
@@ -44,10 +43,26 @@ CREATE TYPE "DCARD" AS (
 
 
 --
+-- Name: TYPE "DCARD"; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
+
+
+--
+-- Name: DMAPI; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE tps."DMAPI" AS (
+	doc jsonb
+);
+
+
+--
 -- Name: dcard; Type: TYPE; Schema: tps; Owner: -
 --
 
-CREATE TYPE dcard AS (
+CREATE TYPE tps.dcard AS (
 	"Trans. Date" date,
 	"Post Date" date,
 	"Description" text,
@@ -60,7 +75,7 @@ CREATE TYPE dcard AS (
 -- Name: hunt; Type: TYPE; Schema: tps; Owner: -
 --
 
-CREATE TYPE hunt AS (
+CREATE TYPE tps.hunt AS (
 	"Date" date,
 	"Reference Number" numeric,
 	"Payee Name" text,
@@ -74,7 +89,7 @@ CREATE TYPE hunt AS (
 -- Name: srce_defn_schema; Type: TYPE; Schema: tps; Owner: -
 --
 
-CREATE TYPE srce_defn_schema AS (
+CREATE TYPE tps.srce_defn_schema AS (
 	key text,
 	type text
 );
@@ -84,7 +99,7 @@ CREATE TYPE srce_defn_schema AS (
 -- Name: jsonb_concat(jsonb, jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION jsonb_concat(state jsonb, concat jsonb) RETURNS jsonb
+CREATE FUNCTION tps.jsonb_concat(state jsonb, concat jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -99,7 +114,7 @@ $$;
 -- Name: jsonb_extract(jsonb, text[]); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
+CREATE FUNCTION tps.jsonb_extract(rec jsonb, key_list text[]) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -121,7 +136,7 @@ $$;
 -- Name: srce_import(text, text); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION srce_import(_path text, _srce text) RETURNS jsonb
+CREATE FUNCTION tps.srce_import(_path text, _srce text) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 DECLARE _t text;
@@ -367,7 +382,7 @@ $_$;
 -- Name: srce_map_def_set(text, text, jsonb, integer); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION srce_map_def_set(_srce text, _map text, _defn jsonb, _seq integer) RETURNS jsonb
+CREATE FUNCTION tps.srce_map_def_set(_srce text, _map text, _defn jsonb, _seq integer) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 
@@ -423,7 +438,7 @@ $_$;
 -- Name: srce_map_overwrite(text); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION srce_map_overwrite(_srce text) RETURNS jsonb
+CREATE FUNCTION tps.srce_map_overwrite(_srce text) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 DECLARE
@@ -683,7 +698,7 @@ $_$;
 -- Name: srce_map_val_set(text, text, jsonb, jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION srce_map_val_set(_srce text, _target text, _ret jsonb, _map jsonb) RETURNS jsonb
+CREATE FUNCTION tps.srce_map_val_set(_srce text, _target text, _ret jsonb, _map jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 
@@ -737,7 +752,7 @@ $_$;
 -- Name: srce_set(text, jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION srce_set(_name text, _defn jsonb) RETURNS jsonb
+CREATE FUNCTION tps.srce_set(_name text, _defn jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 
@@ -746,6 +761,7 @@ _cnt int;
 _conflict BOOLEAN;
 _message jsonb;
 _sql text;
+_cur_sch jsonb;
 
 BEGIN
 
@@ -754,6 +770,16 @@ BEGIN
 2. if update, determine if conflicts exists
 3. do merge
 */
+
+    -------extract current source schema for compare--------------------------
+    SELECT
+        defn->'schema'
+    INTO
+        _cur_sch
+    FROM
+        tps.srce
+    WHERE
+        srce = _name;
 
     -------check for transctions already existing under this source-----------
     SELECT
@@ -765,22 +791,24 @@ BEGIN
     WHERE
         srce = _name;
 
-    -------set a message------------------------------------------------------
+    --if there are transaction already and the schema is different stop--------
     IF _cnt > 0 THEN
-        _conflict = TRUE;
-        --get out of the function somehow
-        _message = 
-        $$
-                {
-                    "message":"transactions already exist under source profile, cannot change the definition"
-                    ,"status":"error"
-                }
-        $$::jsonb;
-        return _message;
+        IF _cur_sch <> _defn->'schema' THEN
+            _conflict = TRUE;
+            --get out of the function somehow
+            _message = 
+            $$
+                    {
+                        "message":"transactions already exist under source profile and there is a pending schema change"
+                        ,"status":"error"
+                    }
+            $$::jsonb;
+            return _message;
+        END IF;
     END IF;
 
     /*-------------------------------------------------------
-    schema validation
+    do schema validation fo _defn object?
     ---------------------------------------------------------*/
     
     -------------------insert definition----------------------------------------
@@ -815,6 +843,8 @@ BEGIN
 
     EXECUTE format('CREATE TYPE tps.%I AS (%s)',_name,_sql);
 
+    EXECUTE format('COMMENT ON TYPE tps.%I IS %L',_name,(_defn->>'description'));
+
     ----------------set message-----------------------------------------------------
     
     _message = 
@@ -834,8 +864,8 @@ $_$;
 -- Name: jsonb_concat_obj(jsonb); Type: AGGREGATE; Schema: tps; Owner: -
 --
 
-CREATE AGGREGATE jsonb_concat_obj(jsonb) (
-    SFUNC = jsonb_concat,
+CREATE AGGREGATE tps.jsonb_concat_obj(jsonb) (
+    SFUNC = tps.jsonb_concat,
     STYPE = jsonb,
     INITCOND = '{}'
 );
@@ -849,7 +879,7 @@ SET default_with_oids = false;
 -- Name: map_rm; Type: TABLE; Schema: tps; Owner: -
 --
 
-CREATE TABLE map_rm (
+CREATE TABLE tps.map_rm (
     srce text NOT NULL,
     target text NOT NULL,
     regex jsonb,
@@ -861,14 +891,14 @@ CREATE TABLE map_rm (
 -- Name: TABLE map_rm; Type: COMMENT; Schema: tps; Owner: -
 --
 
-COMMENT ON TABLE map_rm IS 'regex instructions';
+COMMENT ON TABLE tps.map_rm IS 'regex instructions';
 
 
 --
 -- Name: map_rv; Type: TABLE; Schema: tps; Owner: -
 --
 
-CREATE TABLE map_rv (
+CREATE TABLE tps.map_rv (
     srce text NOT NULL,
     target text NOT NULL,
     retval jsonb NOT NULL,
@@ -880,14 +910,14 @@ CREATE TABLE map_rv (
 -- Name: TABLE map_rv; Type: COMMENT; Schema: tps; Owner: -
 --
 
-COMMENT ON TABLE map_rv IS 'map return value assignemnt';
+COMMENT ON TABLE tps.map_rv IS 'map return value assignemnt';
 
 
 --
 -- Name: srce; Type: TABLE; Schema: tps; Owner: -
 --
 
-CREATE TABLE srce (
+CREATE TABLE tps.srce (
     srce text NOT NULL,
     defn jsonb
 );
@@ -897,21 +927,20 @@ CREATE TABLE srce (
 -- Name: TABLE srce; Type: COMMENT; Schema: tps; Owner: -
 --
 
-COMMENT ON TABLE srce IS 'source master listing and definition';
+COMMENT ON TABLE tps.srce IS 'source master listing and definition';
 
 
 --
 -- Name: trans; Type: TABLE; Schema: tps; Owner: -
 --
 
-CREATE TABLE trans (
+CREATE TABLE tps.trans (
     id integer NOT NULL,
     srce text,
     rec jsonb,
     parse jsonb,
     map jsonb,
-    allj jsonb,
-    logid bigint
+    allj jsonb
 );
 
 
@@ -919,15 +948,15 @@ CREATE TABLE trans (
 -- Name: TABLE trans; Type: COMMENT; Schema: tps; Owner: -
 --
 
-COMMENT ON TABLE trans IS 'source records';
+COMMENT ON TABLE tps.trans IS 'source records';
 
 
 --
 -- Name: trans_id_seq; Type: SEQUENCE; Schema: tps; Owner: -
 --
 
-ALTER TABLE trans ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME trans_id_seq
+ALTER TABLE tps.trans ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME tps.trans_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -940,7 +969,7 @@ ALTER TABLE trans ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 -- Name: trans_log; Type: TABLE; Schema: tps; Owner: -
 --
 
-CREATE TABLE trans_log (
+CREATE TABLE tps.trans_log (
     id integer NOT NULL,
     info jsonb
 );
@@ -950,15 +979,15 @@ CREATE TABLE trans_log (
 -- Name: TABLE trans_log; Type: COMMENT; Schema: tps; Owner: -
 --
 
-COMMENT ON TABLE trans_log IS 'import event information';
+COMMENT ON TABLE tps.trans_log IS 'import event information';
 
 
 --
 -- Name: trans_log_id_seq; Type: SEQUENCE; Schema: tps; Owner: -
 --
 
-ALTER TABLE trans_log ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME trans_log_id_seq
+ALTER TABLE tps.trans_log ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME tps.trans_log_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -971,7 +1000,7 @@ ALTER TABLE trans_log ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 -- Name: map_rm map_rm_pk; Type: CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY map_rm
+ALTER TABLE ONLY tps.map_rm
     ADD CONSTRAINT map_rm_pk PRIMARY KEY (srce, target);
 
 
@@ -979,7 +1008,7 @@ ALTER TABLE ONLY map_rm
 -- Name: map_rv map_rv_pk; Type: CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY map_rv
+ALTER TABLE ONLY tps.map_rv
     ADD CONSTRAINT map_rv_pk PRIMARY KEY (srce, target, retval);
 
 
@@ -987,7 +1016,7 @@ ALTER TABLE ONLY map_rv
 -- Name: srce srce_pkey; Type: CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY srce
+ALTER TABLE ONLY tps.srce
     ADD CONSTRAINT srce_pkey PRIMARY KEY (srce);
 
 
@@ -995,7 +1024,7 @@ ALTER TABLE ONLY srce
 -- Name: trans_log trans_log_pkey; Type: CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY trans_log
+ALTER TABLE ONLY tps.trans_log
     ADD CONSTRAINT trans_log_pkey PRIMARY KEY (id);
 
 
@@ -1003,7 +1032,7 @@ ALTER TABLE ONLY trans_log
 -- Name: trans trans_pkey; Type: CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY trans
+ALTER TABLE ONLY tps.trans
     ADD CONSTRAINT trans_pkey PRIMARY KEY (id);
 
 
@@ -1011,45 +1040,45 @@ ALTER TABLE ONLY trans
 -- Name: trans_allj; Type: INDEX; Schema: tps; Owner: -
 --
 
-CREATE INDEX trans_allj ON trans USING gin (allj);
+CREATE INDEX trans_allj ON tps.trans USING gin (allj);
 
 
 --
 -- Name: trans_rec; Type: INDEX; Schema: tps; Owner: -
 --
 
-CREATE INDEX trans_rec ON trans USING gin (rec);
+CREATE INDEX trans_rec ON tps.trans USING gin (rec);
 
 
 --
 -- Name: trans_srce; Type: INDEX; Schema: tps; Owner: -
 --
 
-CREATE INDEX trans_srce ON trans USING btree (srce);
+CREATE INDEX trans_srce ON tps.trans USING btree (srce);
 
 
 --
 -- Name: map_rm map_rm_fk_srce; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY map_rm
-    ADD CONSTRAINT map_rm_fk_srce FOREIGN KEY (srce) REFERENCES srce(srce);
+ALTER TABLE ONLY tps.map_rm
+    ADD CONSTRAINT map_rm_fk_srce FOREIGN KEY (srce) REFERENCES tps.srce(srce);
 
 
 --
 -- Name: map_rv map_rv_fk_rm; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY map_rv
-    ADD CONSTRAINT map_rv_fk_rm FOREIGN KEY (srce, target) REFERENCES map_rm(srce, target);
+ALTER TABLE ONLY tps.map_rv
+    ADD CONSTRAINT map_rv_fk_rm FOREIGN KEY (srce, target) REFERENCES tps.map_rm(srce, target);
 
 
 --
 -- Name: trans trans_srce_fkey; Type: FK CONSTRAINT; Schema: tps; Owner: -
 --
 
-ALTER TABLE ONLY trans
-    ADD CONSTRAINT trans_srce_fkey FOREIGN KEY (srce) REFERENCES srce(srce);
+ALTER TABLE ONLY tps.trans
+    ADD CONSTRAINT trans_srce_fkey FOREIGN KEY (srce) REFERENCES tps.srce(srce);
 
 
 --
