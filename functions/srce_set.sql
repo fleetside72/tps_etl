@@ -7,6 +7,7 @@ _cnt int;
 _conflict BOOLEAN;
 _message jsonb;
 _sql text;
+_cur_sch jsonb;
 
 BEGIN
 
@@ -15,6 +16,16 @@ BEGIN
 2. if update, determine if conflicts exists
 3. do merge
 */
+
+    -------extract current source schema for compare--------------------------
+    SELECT
+        defn->'schema'
+    INTO
+        _cur_sch
+    FROM
+        tps.srce
+    WHERE
+        srce = _name;
 
     -------check for transctions already existing under this source-----------
     SELECT
@@ -26,22 +37,24 @@ BEGIN
     WHERE
         srce = _name;
 
-    -------set a message------------------------------------------------------
+    --if there are transaction already and the schema is different stop--------
     IF _cnt > 0 THEN
-        _conflict = TRUE;
-        --get out of the function somehow
-        _message = 
-        $$
-                {
-                    "message":"transactions already exist under source profile, cannot change the definition"
-                    ,"status":"error"
-                }
-        $$::jsonb;
-        return _message;
+        IF _cur_sch <> _defn->'schema' THEN
+            _conflict = TRUE;
+            --get out of the function somehow
+            _message = 
+            $$
+                    {
+                        "message":"transactions already exist under source profile and there is a pending schema change"
+                        ,"status":"error"
+                    }
+            $$::jsonb;
+            return _message;
+        END IF;
     END IF;
 
     /*-------------------------------------------------------
-    schema validation
+    do schema validation fo _defn object?
     ---------------------------------------------------------*/
     
     -------------------insert definition----------------------------------------
@@ -75,6 +88,8 @@ BEGIN
     RAISE NOTICE 'CREATE TYPE tps.% AS (%)',_name,_sql;
 
     EXECUTE format('CREATE TYPE tps.%I AS (%s)',_name,_sql);
+
+    EXECUTE format('COMMENT ON TYPE tps.%I IS %L',_name,(_defn->>'description'));
 
     ----------------set message-----------------------------------------------------
     
