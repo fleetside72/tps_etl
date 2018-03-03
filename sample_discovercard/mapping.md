@@ -142,3 +142,29 @@ SELECT
     x.message
 FROM
     tps.srce_map_overwrite('DCARD') x(message);
+
+
+
+mass insert
+------------------------------------------------------
+
+INSERT INTO 
+	tps.map_rv
+SELECT
+	*
+FROM
+	(
+		VALUES
+			('DCARD','First 20','{"f20": "DISCOUNT DRUG MART 3"}','{"party":"Discount Drug Mart","reason":"groceries"}'),
+			('DCARD','First 20','{"f20": "TARGET STOW OH"}','{"party":"Target","reason":"groceries"}'),
+			('DCARD','First 20','{"f20": "WALMART GROCERY 800-"}','{"party":"Walmart","reason":"groceries"}'),
+			('DCARD','First 20','{"f20": "CIRCLE K 05416 STOW "}','{"party":"Circle K","reason":"gasoline"}'),
+			('DCARD','First 20','{"f20": "TARGET.COM * 800-591"}','{"party":"Target","reason":"home supplies"}'),
+			('DCARD','First 20','{"f20": "ACME NO. 17 STOW OH"}','{"party":"Acme","reason":"groceries"}'),
+			('DCARD','First 20','{"f20": "AT&T *PAYMENT 800-28"}','{"party":"AT&T","reason":"internet"}'),
+			('DCARD','First 20','{"f20": "AUTOZONE #0722 STOW "}','{"party":"Autozone","reason":"auto maint"}'),
+			('DCARD','First 20','{"f20": "BESTBUYCOM8055267948"}','{"party":"BestBuy","reason":"home supplies"}'),
+			('DCARD','First 20','{"f20": "BUFFALO WILD WINGS K"}','{"party":"Buffalo Wild Wings","reason":"restaurante"}'),
+			('DCARD','First 20','{"f20": "CASHBACK BONUS REDEM"}','{"party":"Discover Card","reason":"financing"}'),
+			('DCARD','First 20','{"f20": "CLE CLINIC PT PMTS 2"}','{"party":"Cleveland Clinic","reason":"medical"}')
+	) x
