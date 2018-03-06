@@ -484,24 +484,7 @@ BEGIN
 
     --RAISE NOTICE '%', _t;
 
-    BEGIN
-        EXECUTE _t;
-    EXCEPTION WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS 
-            _MESSAGE_TEXT = MESSAGE_TEXT,
-            _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
-            _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
-        _message:= 
-        ($$
-            {
-                "status":"fail",
-                "message":"error importing data"
-            }
-        $$::jsonb)
-        ||jsonb_build_object('message_text',_MESSAGE_TEXT)
-        ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
-        return _message;
-    END;
+    EXECUTE _t;
 
     WITH 
 
@@ -646,7 +629,23 @@ BEGIN
     )||jsonb_build_object('details',_log_info);
 
     RETURN _message;
-END
+
+EXCEPTION WHEN OTHERS THEN
+    GET STACKED DIAGNOSTICS 
+        _MESSAGE_TEXT = MESSAGE_TEXT,
+        _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
+        _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
+    _message:= 
+    ($$
+        {
+            "status":"fail",
+            "message":"error importing data"
+        }
+    $$::jsonb)
+    ||jsonb_build_object('message_text',_MESSAGE_TEXT)
+    ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
+    return _message;
+END;
 $_$;
 
 
