@@ -28,3 +28,28 @@ Major Interactions
 * Regex Instructions (Maint/Inquire)
 * Cross Reference List (Maint/Inquire)
 * Run Import (Run Job)
+
+
+
+### Interaction Details
+* Source Definitions (Maint/Inquire)
+
+    * display a list of existing sources with display detials/edit options
+    * create new option
+    * underlying function is `tps.srce_set(_name text, _defn jsonb)`
+
+* Regex Instructions (Maint/Inquire)
+
+    * display a list of existing instruction sets with display details/edit options
+    * create new option
+    * underlying function is `tps.srce_map_def_set(_srce text, _map text, _defn jsonb, _seq int)` which takes a source "code" and a json
+
+* Cross Reference List (Maint/Inquire)
+
+    * first step is to populate a list of values returned from the instructions (choose all or unmapped) `tps.report_unmapped(_srce text)`
+    * the list of rows facilitates additional named column(s) to be added which are used to assign values anytime the result occurs
+    * function to set the values of the cross reference `tps.srce_map_val_set_multi(_maps jsonb)`
+
+* Run Import
+
+    * underlying function is `tps.srce_import(_path text, _srce text)`
