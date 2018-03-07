@@ -49,25 +49,6 @@ CREATE TYPE tps."DCARD" AS (
 COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 
 
---
--- Name: DCARD2; Type: TYPE; Schema: tps; Owner: -
---
-
-CREATE TYPE tps."DCARD2" AS (
-	"Trans. Date" numeric,
-	"Post Date" numeric,
-	"Description" text,
-	"Amount" numeric,
-	"Category" text
-);
-
-
---
--- Name: TYPE "DCARD2"; Type: COMMENT; Schema: tps; Owner: -
---
-
-COMMENT ON TYPE tps."DCARD2" IS 'Discover Card';
-
 
 --
 -- Name: DMAPI; Type: TYPE; Schema: tps; Owner: -
@@ -75,6 +56,41 @@ COMMENT ON TYPE tps."DCARD2" IS 'Discover Card';
 
 CREATE TYPE tps."DMAPI" AS (
 	doc jsonb
+);
+
+
+--
+-- Name: WMPD; Type: TYPE; Schema: tps; Owner: -
+--
+
+CREATE TYPE tps."WMPD" AS (
+	"Carrier" text,
+	"SCAC" text,
+	"Mode" text,
+	"Pro #" text,
+	"B/L" text,
+	"Pd Amt" numeric,
+	"Loc#" text,
+	"Pcs" numeric,
+	"Wgt" numeric,
+	"Chk#" numeric,
+	"Pay Dt" date,
+	"Acct #" text,
+	"I/O" text,
+	"Sh Nm" text,
+	"Sh City" text,
+	"Sh St" text,
+	"Sh Zip" text,
+	"Cons Nm" text,
+	"D City " text,
+	"D St" text,
+	"D Zip" text,
+	"Sh Dt" date,
+	"Inv Dt" date,
+	"Customs Entry#" text,
+	"Miles" numeric,
+	"Frt Class" text,
+	"Master B/L" text
 );
 
 
@@ -1085,10 +1101,10 @@ $_$;
 
 
 --
--- Name: srce_set(text, jsonb); Type: FUNCTION; Schema: tps; Owner: -
+-- Name: srce_set(jsonb); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION tps.srce_set(_name text, _defn jsonb) RETURNS jsonb
+CREATE FUNCTION tps.srce_set(_defn jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $_$
 
@@ -1115,7 +1131,7 @@ BEGIN
     FROM
         tps.srce
     WHERE
-        srce = _name;
+        srce = _defn->>'name';
 
     -------check for transctions already existing under this source-----------
     SELECT
@@ -1125,7 +1141,7 @@ BEGIN
     FROM
         tps.trans
     WHERE
-        srce = _name;
+        srce = _defn->>'name';
 
     --if there are transaction already and the schema is different stop--------
     IF _cnt > 0 THEN
@@ -1151,14 +1167,14 @@ BEGIN
     INSERT INTO
         tps.srce
     SELECT
-        _name, _defn
+        _defn->>'name', _defn
     ON CONFLICT ON CONSTRAINT srce_pkey DO UPDATE
         SET
             defn = _defn;
 
     ------------------drop existing type-----------------------------------------
 
-    EXECUTE format('DROP TYPE IF EXISTS tps.%I',_name);
+    EXECUTE format('DROP TYPE IF EXISTS tps.%I',_defn->>'name');
 
     ------------------create new type--------------------------------------------
 
@@ -1171,15 +1187,15 @@ BEGIN
         --unwrap the schema definition array
         LEFT JOIN LATERAL jsonb_populate_recordset(null::tps.srce_defn_schema, defn->'schema') prs ON TRUE
     WHERE   
-        srce = _name
+        srce = _defn->>'name'
     GROUP BY
         srce;
 
-    RAISE NOTICE 'CREATE TYPE tps.% AS (%)',_name,_sql;
+    RAISE NOTICE 'CREATE TYPE tps.% AS (%)',_defn->>'name',_sql;
 
-    EXECUTE format('CREATE TYPE tps.%I AS (%s)',_name,_sql);
+    EXECUTE format('CREATE TYPE tps.%I AS (%s)',_defn->>'name',_sql);
 
-    EXECUTE format('COMMENT ON TYPE tps.%I IS %L',_name,(_defn->>'description'));
+    EXECUTE format('COMMENT ON TYPE tps.%I IS %L',_defn->>'name',(_defn->>'description'));
 
     ----------------set message-----------------------------------------------------
     
