@@ -161,7 +161,7 @@ BEGIN
 	FOREACH t SLICE 1 IN ARRAY key_list LOOP
 		--RAISE NOTICE '%', t;
 		--RAISE NOTICE '%', t[1];
-		j := j || jsonb_build_object(t[1],rec#>t);
+		j := j || jsonb_build_object(t::text,rec#>t);
 	END LOOP;
 	RETURN j;
 END;
