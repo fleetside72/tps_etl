@@ -10,6 +10,7 @@ The goal is to:
 It is well suited for data from outside systems that 
 * requires complex transformation (parsing and mapping)
 * original data is retained for reference
+* don't feel like writing a map-reduce
 
 use cases:
 * on-going bank feeds
