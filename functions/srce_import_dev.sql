@@ -124,13 +124,117 @@ BEGIN
             pending_list
     )
     
+        -----------list of keys already loaded to tps-----------------------------------------------------------------------------------------------------
+
+    , matched_keys AS (
+        SELECT DISTINCT
+            k.json_key
+        FROM
+            pending_keys k
+            INNER JOIN tps.trans t ON
+                t.rec @> k.json_key
+    )
+
+    -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
+
+    , unmatched_keys AS (
+    SELECT
+        json_key
+    FROM
+        pending_keys
+
+    EXCEPT
+
+    SELECT
+        json_key
+    FROM
+        matched_keys
+    )
+
+    -----------insert pending rows that have key with no trans match-----------------------------------------------------------------------------------
+    --need to look into mapping the transactions prior to loading
+
+    , inserted AS (
+        INSERT INTO
+            /*
+            need to insert the unique contraint somwhere at this point
+            * add to allj and make sure trigger does not overwrite
+            * add to rec
+            * add a new column
+            */
+            tps.trans (srce, rec)
+        SELECT
+            pl.srce
+            ,pl.rec
+        FROM 
+            pending_list pl
+            INNER JOIN unmatched_keys u ON
+                u.json_key = pl.json_key
+        ORDER BY
+            pl.id ASC
+        ----this conflict is only if an exact duplicate rec json happens, which will be rejected
+        ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
+        RETURNING *
+    )
+
+    --------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
+
+    , logged AS (
+    INSERT INTO
+        tps.trans_log (info)
+    SELECT
+        JSONB_BUILD_OBJECT('time_stamp',CURRENT_TIMESTAMP)
+        ||JSONB_BUILD_OBJECT('srce',_srce)
+        ||JSONB_BUILD_OBJECT('path',_path)
+        ||JSONB_BUILD_OBJECT('not_inserted',
+            (
+                SELECT 
+                    jsonb_agg(json_key)
+                FROM
+                    matched_keys
+            )
+        )
+        ||JSONB_BUILD_OBJECT('inserted',
+            (
+                SELECT 
+                    jsonb_agg(json_key)
+                FROM
+                    unmatched_keys
+            )
+        )
+    RETURNING *
+    )
+
+    SELECT
+        id
+        ,info
+    INTO
+        _log_id
+        ,_log_info
+    FROM
+        logged;
+
+    --RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
+
+    _message:= 
+    (
+        format(
+        $$
+            {
+            "status":"complete",
+            "message":"import of %L for source %L complete"
+            }
+        $$, _path, _srce)::jsonb
+    )||jsonb_build_object('details',_log_info);
     
     select * from pending_keys
 	) with data;
 end;
 $F$;
 SELECT
-    k.json_key, T.REC
+    JSONB_PRETTY(k.json_key) orig, 
+    jsonb_pretty(jsonb_build_object('input_constraint',k.json_key)) uq,
+    T.REC
 FROM
     tps.x k
     left outer JOIN tps.trans t ON
