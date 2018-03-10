@@ -126,6 +126,7 @@ ORDER BY
 SELECT 
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -166,6 +167,7 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -184,6 +186,7 @@ GROUP BY
 SELECT
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -194,6 +197,7 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -209,6 +213,7 @@ SELECT
 	,map_val
 	,retain_val
 	,count(*) "count"
+    ,jsonb_agg(reC) recs
 FROM 
 	agg_to_target
 GROUP BY
@@ -228,6 +233,7 @@ SELECT
     ,a.map_intention
     ,a.map_val
     ,a."count"
+    ,a.recs
     ,a.retain_val
     ,v.map mapped_val
 FROM
@@ -242,6 +248,7 @@ SELECT
     ,l.target
     ,l.map_val
     ,l."count"
+    ,l.recs
 FROM
     link_map l
 WHERE
