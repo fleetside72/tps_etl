@@ -49,11 +49,6 @@ CREATE TYPE tps."DCARD" AS (
 COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> master
 --
 -- Name: DMAPI; Type: TYPE; Schema: tps; Owner: -
 --
