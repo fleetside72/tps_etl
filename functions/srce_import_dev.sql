@@ -1,3 +1,4 @@
+
 DO $F$
 DECLARE _t text;
 DECLARE _c text;
@@ -75,9 +76,9 @@ BEGIN
 
     EXECUTE _t;
 	
-	drop table if exists tps.x;
-	create table tps.x as
-	(
+	--drop table if exists tps.x;
+	--create table tps.x as
+	--(
     WITH 
 
     -------------extract the limiter fields to one row per source----------------------------------
@@ -98,10 +99,13 @@ BEGIN
 
     ,pending_list AS (
         SELECT
-            tps.jsonb_extract(
-                    row_to_json(i)::jsonb
-                    ,ext.text_array
-            ) json_key,
+            jsonb_build_object(
+                'input_constraint',
+                tps.jsonb_extract(
+                        row_to_json(i)::jsonb
+                        ,ext.text_array
+                )
+             ) json_key,
             row_to_json(i)::JSONB rec,
             srce,
             --ae.rn,
@@ -214,8 +218,9 @@ BEGIN
     FROM
         logged;
 
-    --RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
+    RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
 
+    /*
     _message:= 
     (
         format(
@@ -226,11 +231,15 @@ BEGIN
             }
         $$, _path, _srce)::jsonb
     )||jsonb_build_object('details',_log_info);
-    
-    select * from pending_keys
-	) with data;
+
+
+    RAISE NOTICE '%s',_message;
+    */
+    --select * from pending_keys
+	--) with data;
 end;
 $F$;
+/*
 SELECT
     JSONB_PRETTY(k.json_key) orig, 
     jsonb_pretty(jsonb_build_object('input_constraint',k.json_key)) uq,
@@ -239,3 +248,4 @@ FROM
     tps.x k
     left outer JOIN tps.trans t ON
         t.rec @> k.json_key;
+*/
