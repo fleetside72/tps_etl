@@ -49,24 +49,6 @@ CREATE TYPE tps."DCARD" AS (
 COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 
 
---
--- Name: DCARD2; Type: TYPE; Schema: tps; Owner: -
---
-
-CREATE TYPE tps."DCARD2" AS (
-	"Trans. Date" numeric,
-	"Post Date" numeric,
-	"Description" text,
-	"Amount" numeric,
-	"Category" text
-);
-
-
---
--- Name: TYPE "DCARD2"; Type: COMMENT; Schema: tps; Owner: -
---
-
-COMMENT ON TYPE tps."DCARD2" IS 'Discover Card';
 
 
 --
