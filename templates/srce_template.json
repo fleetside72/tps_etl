@@ -1,7 +1,3 @@
-UPDATE tps.SRCE
-
-SET DEFN = 
-$$
 {
     "name": "WMPD",
     "descr": "Williams Paid File",
@@ -123,6 +119,3 @@ $$
         ]
     }
 }
-$$::JSONB
-WHERE
-SRCE = 'WMPD'
