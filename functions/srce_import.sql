@@ -144,7 +144,7 @@ BEGIN
         FROM
             pending_keys k
             INNER JOIN tps.trans t ON
-                t.rec @> k.json_key
+                t.ic = k.json_key
     )
 
     -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
@@ -168,10 +168,11 @@ BEGIN
 
     , inserted AS (
         INSERT INTO
-            tps.trans (srce, rec)
+            tps.trans (srce, rec, ic)
         SELECT
             pl.srce
             ,pl.rec
+            ,pl.json_key
         FROM 
             pending_list pl
             INNER JOIN unmatched_keys u ON

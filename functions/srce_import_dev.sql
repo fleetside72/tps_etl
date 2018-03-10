@@ -99,13 +99,10 @@ BEGIN
 
     ,pending_list AS (
         SELECT
-            jsonb_build_object(
-                'input_constraint',
-                tps.jsonb_extract(
-                        row_to_json(i)::jsonb
-                        ,ext.text_array
-                )
-             ) json_key,
+            tps.jsonb_extract(
+                    row_to_json(i)::jsonb
+                    ,ext.text_array
+            ) json_key,
             row_to_json(i)::JSONB rec,
             srce,
             --ae.rn,
@@ -136,7 +133,7 @@ BEGIN
         FROM
             pending_keys k
             INNER JOIN tps.trans t ON
-                t.rec @> k.json_key
+                t.ic = k.json_key
     )
 
     -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
@@ -160,16 +157,11 @@ BEGIN
 
     , inserted AS (
         INSERT INTO
-            /*
-            need to insert the unique contraint somwhere at this point
-            * add to allj and make sure trigger does not overwrite
-            * add to rec
-            * add a new column
-            */
-            tps.trans (srce, rec)
+            tps.trans (srce, rec, ic)
         SELECT
             pl.srce
             ,pl.rec
+            ,pl.json_key
         FROM 
             pending_list pl
             INNER JOIN unmatched_keys u ON

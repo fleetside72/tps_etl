@@ -49,7 +49,6 @@ CREATE TYPE tps."DCARD" AS (
 COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 
 
-
 --
 -- Name: DMAPI; Type: TYPE; Schema: tps; Owner: -
 --
@@ -57,7 +56,6 @@ COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 CREATE TYPE tps."DMAPI" AS (
 	doc jsonb
 );
-
 
 
 --
@@ -521,7 +519,7 @@ BEGIN
         FROM
             pending_keys k
             INNER JOIN tps.trans t ON
-                t.rec @> k.json_key
+                t.ic = k.json_key
     )
 
     -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
@@ -545,10 +543,11 @@ BEGIN
 
     , inserted AS (
         INSERT INTO
-            tps.trans (srce, rec)
+            tps.trans (srce, rec, ic)
         SELECT
             pl.srce
             ,pl.rec
+            ,pl.json_key
         FROM 
             pending_list pl
             INNER JOIN unmatched_keys u ON
@@ -1490,7 +1489,8 @@ CREATE TABLE tps.trans (
     rec jsonb,
     parse jsonb,
     map jsonb,
-    allj jsonb
+    allj jsonb,
+    ic jsonb
 );
 
 
@@ -1499,6 +1499,13 @@ CREATE TABLE tps.trans (
 --
 
 COMMENT ON TABLE tps.trans IS 'source records';
+
+
+--
+-- Name: COLUMN trans.ic; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON COLUMN tps.trans.ic IS 'input constraint value';
 
 
 --
