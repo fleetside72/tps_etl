@@ -49,7 +49,6 @@ CREATE TYPE tps."DCARD" AS (
 COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 
 
-
 --
 -- Name: DMAPI; Type: TYPE; Schema: tps; Owner: -
 --
@@ -57,7 +56,6 @@ COMMENT ON TYPE tps."DCARD" IS 'Discover Card';
 CREATE TYPE tps."DMAPI" AS (
 	doc jsonb
 );
-
 
 
 --
