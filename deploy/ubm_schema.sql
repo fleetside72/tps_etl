@@ -59,40 +59,6 @@ CREATE TYPE tps."DMAPI" AS (
 );
 
 
---
--- Name: WMPD; Type: TYPE; Schema: tps; Owner: -
---
-
-CREATE TYPE tps."WMPD" AS (
-	"Carrier" text,
-	"SCAC" text,
-	"Mode" text,
-	"Pro #" text,
-	"B/L" text,
-	"Pd Amt" numeric,
-	"Loc#" text,
-	"Pcs" numeric,
-	"Wgt" numeric,
-	"Chk#" numeric,
-	"Pay Dt" date,
-	"Acct #" text,
-	"I/O" text,
-	"Sh Nm" text,
-	"Sh City" text,
-	"Sh St" text,
-	"Sh Zip" text,
-	"Cons Nm" text,
-	"D City " text,
-	"D St" text,
-	"D Zip" text,
-	"Sh Dt" date,
-	"Inv Dt" date,
-	"Customs Entry#" text,
-	"Miles" numeric,
-	"Frt Class" text,
-	"Master B/L" text
-);
-
 
 --
 -- Name: dcard; Type: TYPE; Schema: tps; Owner: -
