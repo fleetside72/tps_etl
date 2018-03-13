@@ -125,7 +125,7 @@ BEGIN
 	FOREACH t SLICE 1 IN ARRAY key_list LOOP
 		--RAISE NOTICE '%', t;
 		--RAISE NOTICE '%', t[1];
-		j := j || jsonb_build_object(t[1],rec#>t);
+		j := j || jsonb_build_object(t::text,rec#>t);
 	END LOOP;
 	RETURN j;
 END;
@@ -519,7 +519,7 @@ BEGIN
         FROM
             pending_keys k
             INNER JOIN tps.trans t ON
-                t.rec @> k.json_key
+                t.ic = k.json_key
     )
 
     -----------return unique keys that are not already in tps.trans-----------------------------------------------------------------------------------
@@ -543,10 +543,11 @@ BEGIN
 
     , inserted AS (
         INSERT INTO
-            tps.trans (srce, rec)
+            tps.trans (srce, rec, ic)
         SELECT
             pl.srce
             ,pl.rec
+            ,pl.json_key
         FROM 
             pending_list pl
             INNER JOIN unmatched_keys u ON
@@ -1488,7 +1489,8 @@ CREATE TABLE tps.trans (
     rec jsonb,
     parse jsonb,
     map jsonb,
-    allj jsonb
+    allj jsonb,
+    ic jsonb
 );
 
 
@@ -1497,6 +1499,13 @@ CREATE TABLE tps.trans (
 --
 
 COMMENT ON TABLE tps.trans IS 'source records';
+
+
+--
+-- Name: COLUMN trans.ic; Type: COMMENT; Schema: tps; Owner: -
+--
+
+COMMENT ON COLUMN tps.trans.ic IS 'input constraint value';
 
 
 --

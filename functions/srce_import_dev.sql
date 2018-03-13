@@ -1,21 +1,5 @@
-\timing
-DROP FUNCTION tps.srce_import(_path text, _srce text);
-CREATE OR REPLACE FUNCTION tps.srce_import(_path text, _srce text) RETURNS jsonb
 
-/*--------------------------------------------------------
-0. load target import to temp table
-1. create pending list
-2. get unqiue pending keys
-3. see which keys not already in tps.trans
-4. insert pending records associated with keys that are not already in trans
-5. insert summary to log table
-*/---------------------------------------------------------
-
---to-do
---return infomation to a client via json or composite type
-
-
-AS $f$
+DO $F$
 DECLARE _t text;
 DECLARE _c text;
 DECLARE _log_info jsonb;
@@ -25,11 +9,13 @@ DECLARE _message jsonb;
 _MESSAGE_TEXT text;
 _PG_EXCEPTION_DETAIL text;
 _PG_EXCEPTION_HINT text;
+_path text;
+_srce text;
 
 BEGIN
 
-    --_path := 'C:\users\fleet\downloads\discover-recentactivity-20171031.csv';
-    --_srce := 'DCARD';
+    _path := 'C:\users\fleet\downloads\testj.csv';
+    _srce := 'DMAPI';
 
 ----------------------------------------------------test if source exists----------------------------------------------------------------------------------
 
@@ -53,7 +39,6 @@ BEGIN
             $$,
             _srce
         )::jsonb;
-        RETURN _message;
     END IF;
 ----------------------------------------------------build the column list of the temp table----------------------------------------------------------------
 
@@ -90,7 +75,10 @@ BEGIN
     --RAISE NOTICE '%', _t;
 
     EXECUTE _t;
-
+	
+	--drop table if exists tps.x;
+	--create table tps.x as
+	--(
     WITH 
 
     -------------extract the limiter fields to one row per source----------------------------------
@@ -126,6 +114,7 @@ BEGIN
         ORDER BY    
             id ASC
     )
+    
 
     -----------create a unique list of keys from staged rows------------------------------------------------------------------------------------------
 
@@ -135,8 +124,8 @@ BEGIN
         FROM 
             pending_list
     )
-
-    -----------list of keys already loaded to tps-----------------------------------------------------------------------------------------------------
+    
+        -----------list of keys already loaded to tps-----------------------------------------------------------------------------------------------------
 
     , matched_keys AS (
         SELECT DISTINCT
@@ -221,8 +210,9 @@ BEGIN
     FROM
         logged;
 
-    --RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
+    RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
 
+    /*
     _message:= 
     (
         format(
@@ -234,24 +224,20 @@ BEGIN
         $$, _path, _srce)::jsonb
     )||jsonb_build_object('details',_log_info);
 
-    RETURN _message;
 
-EXCEPTION WHEN OTHERS THEN
-    GET STACKED DIAGNOSTICS 
-        _MESSAGE_TEXT = MESSAGE_TEXT,
-        _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
-        _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
-    _message:= 
-    ($$
-        {
-            "status":"fail",
-            "message":"error importing data"
-        }
-    $$::jsonb)
-    ||jsonb_build_object('message_text',_MESSAGE_TEXT)
-    ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
-    return _message;
-END;
-$f$
-LANGUAGE plpgsql
-
+    RAISE NOTICE '%s',_message;
+    */
+    --select * from pending_keys
+	--) with data;
+end;
+$F$;
+/*
+SELECT
+    JSONB_PRETTY(k.json_key) orig, 
+    jsonb_pretty(jsonb_build_object('input_constraint',k.json_key)) uq,
+    T.REC
+FROM
+    tps.x k
+    left outer JOIN tps.trans t ON
+        t.rec @> k.json_key;
+*/
