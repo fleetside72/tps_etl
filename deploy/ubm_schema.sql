@@ -136,7 +136,7 @@ $$;
 -- Name: report_unmapped(text); Type: FUNCTION; Schema: tps; Owner: -
 --
 
-CREATE FUNCTION tps.report_unmapped(_srce text) RETURNS TABLE(source text, map text, ret_val jsonb, count bigint)
+CREATE FUNCTION tps.report_unmapped(_srce text) RETURNS TABLE(source text, map text, ret_val jsonb, count bigint, recs jsonb)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -256,6 +256,7 @@ ORDER BY
 SELECT 
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -296,6 +297,7 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -314,6 +316,7 @@ GROUP BY
 SELECT
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -324,6 +327,7 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -339,6 +343,7 @@ SELECT
 	,map_val
 	,retain_val
 	,count(*) "count"
+    ,jsonb_agg(reC) recs
 FROM 
 	agg_to_target
 GROUP BY
@@ -358,6 +363,7 @@ SELECT
     ,a.map_intention
     ,a.map_val
     ,a."count"
+    ,a.recs
     ,a.retain_val
     ,v.map mapped_val
 FROM
@@ -372,6 +378,7 @@ SELECT
     ,l.target
     ,l.map_val
     ,l."count"
+    ,l.recs
 FROM
     link_map l
 WHERE
