@@ -4,7 +4,8 @@ CREATE FUNCTION tps.report_unmapped(_srce text) RETURNS TABLE
     source text, 
     map text,
     ret_val jsonb,
-    "count" bigint
+    "count" bigint,
+    recs jsonb
 )
 LANGUAGE plpgsql
 AS
