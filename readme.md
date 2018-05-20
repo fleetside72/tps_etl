@@ -81,13 +81,14 @@ source definition
         * no primary key?
         * every document must work out to one row
 
+```
 {
     "name":"sample_name",
     "source":"client_file",
     "loading_function":"csv"
-    "constrain":[
+    "constraint":[
         "{date}",
-        "{level1,item3,field}"
+        "{doc,origin_addresses,0}"
     ],
     "table_schema":[
         {
@@ -100,4 +101,4 @@ source definition
         }
     ]
 }
-
+```
