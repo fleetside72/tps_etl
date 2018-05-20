@@ -66,16 +66,38 @@ source definition
 ----------------------------------------------------------------------
 
 * **load data**
-    * parsing function reference
-        * csv_from_client --> load file dialog, send content as post body to backend, backend sends array of json as argument to database?
-        * custom_pnc_parse --> load file dialog, send content as post body to backend, parse out data to array of json and send to db as large json object?
-        * _note_ : the database will have to store in the json a reference to these functions which the browser will need to read in order to act on an import request
-
-        * the brwosers role is to extract the contents of a file and send them as a post body to the backend for processing under target function (/parse_csv&q=source)
-
-    * constraints
+    * the brwosers role is to extract the contents of a file and send them as a post body to the backend for processing under target function `based on srce defintion`
+        * the backend builds a json array of all the rows to be added and sends as an argument to a database insert function
+            * build constraint key `based on srce definition`
+            * handle violations
+            * increment global key list (this may not be possible depending on if a json with variable length arrays can be traversed)
+            * build an import log
+            * run maps (as opposed to relying on trigger)
 * **read data**
     * top level key to table as type?
-    * function that returns a string that is a list of columns?
-    * custom function to read and return the table?
+    * view that `uses the source definiton` to extrapolate a table?
+    * a materialized table is built `based on the source definition` and any addtional regex?
+        * add regex = alter table add column with historic updates?
+        * no primary key?
+        * every document must work out to one row
+
+{
+    "name":"sample_name",
+    "source":"client_file",
+    "loading_function":"csv"
+    "constrain":[
+        "{date}",
+        "{level1,item3,field}"
+    ],
+    "table_schema":[
+        {
+            "top_level_key":"column"name",
+            "type":"numeric"
+        },
+        {
+            "top_level_key":"column"name",
+            "type":"numeric"
+        }
+    ]
+}
 
