@@ -93,7 +93,6 @@ source definition
     "constraint":[
         "{doc}"
     ],
-    "schema_type":"JSONB_POPULATE",
     "table_schema":[
         {
             "path":"{doc,origin_addresses,0}",
