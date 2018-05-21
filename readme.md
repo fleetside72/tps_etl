@@ -93,32 +93,35 @@ source definition
     "constraint":[
         "{doc}"
     ],
-    "table_schema":[
-        {
-            "path":"{doc,origin_addresses,0}",
-            "type":"text",
-            "column_name":"origin_address"
-        },
-        {
-            "path":"{doc,destination_addresses,0}",
-            "type":"text",
-            "column_name":"origin_address"
-        },
-        {
-            "path":"{doc,status}",
-            "type":"text",
-            "column_name":"status"
-        }
-        {
-            "path":"{doc,rows,0,elements,0,distance,value}",
-            "type":"numeric",
-            "column_name":"distance"
-        }
-        {
-            "path":"{doc,rows,0,elements,0,duration,value}",
-            "type":"numeric",
-            "column_name":"duration"
-        }
-    ]
+    "table_views":{
+        "default":[
+            {
+                "path":"{doc,origin_addresses,0}",
+                "type":"text",
+                "column_name":"origin_address"
+            },
+            {
+                "path":"{doc,destination_addresses,0}",
+                "type":"text",
+                "column_name":"origin_address"
+            },
+            {
+                "path":"{doc,status}",
+                "type":"text",
+                "column_name":"status"
+            }
+            {
+                "path":"{doc,rows,0,elements,0,distance,value}",
+                "type":"numeric",
+                "column_name":"distance"
+            }
+            {
+                "path":"{doc,rows,0,elements,0,duration,value}",
+                "type":"numeric",
+                "column_name":"duration"
+            }
+        ],
+        "version2":[]
+    }
 }
 ```
