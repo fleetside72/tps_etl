@@ -32,26 +32,33 @@ copy
 select
 $$
 {
-   "destination_addresses" : [ "New York, NY, USA" ],
-   "origin_addresses" : [ "Washington, DC, USA" ],
-   "rows" : [
-      {
-         "elements" : [
+    "id": 1,
+    "doc": {
+        "rows": [
             {
-               "distance" : {
-                  "text" : "225 mi",
-                  "value" : 361940
-               },
-               "duration" : {
-                  "text" : "3 hours 50 mins",
-                  "value" : 13812
-               },
-               "status" : "OK"
+                "elements": [
+                    {
+                        "status": "OK",
+                        "distance": {
+                            "text": "225 mi",
+                            "value": 361940
+                        },
+                        "duration": {
+                            "text": "3 hours 50 mins",
+                            "value": 13812
+                        }
+                    }
+                ]
             }
-         ]
-      }
-   ],
-   "status" : "OK"
+        ],
+        "status": "OK",
+        "origin_addresses": [
+            "Washington, DC, USA"
+        ],
+        "destination_addresses": [
+            "New York, NY, USA"
+        ]
+    }
 }
 $$::JSONB DOC
 )
