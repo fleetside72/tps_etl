@@ -74,7 +74,11 @@ source definition
             * build an import log
             * run maps (as opposed to relying on trigger)
 * **read data**
-    * top level key to table as type?
+    * the `schema` key contains either a text element or a text array in curly braces
+        * forcing everything to extract via `#>{}` would be cleaner but may be more expensive than `jsonb_populate_record`
+        * it took 5.5 seconds to parse 1,000,000 rows of an identicle google distance matrix json to a 5 column temp table
+    * top level key to table based on `jsonb_populate_record` extracting from `tps.type` developed from `srce.defn->schema`
+    * custom function parsing contents based on #> operator and extracting from `srce.defn->schema`
     * view that `uses the source definiton` to extrapolate a table?
     * a materialized table is built `based on the source definition` and any addtional regex?
         * add regex = alter table add column with historic updates?
@@ -87,17 +91,34 @@ source definition
     "source":"client_file",
     "loading_function":"csv"
     "constraint":[
-        "{date}",
-        "{doc,origin_addresses,0}"
+        "{doc}"
     ],
+    "schema_type":"JSONB_POPULATE",
     "table_schema":[
         {
-            "top_level_key":"column"name",
-            "type":"numeric"
+            "path":"{doc,origin_addresses,0}",
+            "type":"text",
+            "column_name":"origin_address"
         },
         {
-            "top_level_key":"column"name",
-            "type":"numeric"
+            "path":"{doc,destination_addresses,0}",
+            "type":"text",
+            "column_name":"origin_address"
+        },
+        {
+            "path":"{doc,status}",
+            "type":"text",
+            "column_name":"status"
+        }
+        {
+            "path":"{doc,rows,0,elements,0,distance,value}",
+            "type":"numeric",
+            "column_name":"distance"
+        }
+        {
+            "path":"{doc,rows,0,elements,0,duration,value}",
+            "type":"numeric",
+            "column_name":"duration"
         }
     ]
 }
