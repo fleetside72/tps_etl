@@ -87,13 +87,14 @@ source definition
 
 ```
 {
-    "name":"sample_name",
+    "name":"dcard",
     "source":"client_file",
     "loading_function":"csv"
     "constraint":[
-        "{doc}"
+        "{Trans. Date}",
+        "{Post Date}"
     ],
-    "table_views":{
+    "schemas":{
         "default":[
             {
                 "path":"{doc,origin_addresses,0}",
