@@ -1,3 +1,5 @@
+--need to build history (trigger)?
+
 DO $f$
 
 DECLARE
@@ -54,49 +56,15 @@ BEGIN
         $$
     INTO
         _defn;
-
-/*
-validate schema? should not need validation if created by ui
-
-
-
-
-*/
-
-    -------extract current source schema for compare--------------------------
-    SELECT
-        defn#>'{schemas,default}'
-    INTO
-        _cur_sch
-    FROM
-        tps.srce
-    WHERE
-        srce = _defn->>'name';
-
-
-    /*-------------------------------------------------------
-    do schema validation
-    ---------------------------------------------------------*/
     
     -------------------insert definition----------------------------------------
     INSERT INTO
-        tps.srce
+        tps.srce (srce, defn)
     SELECT
         _defn->>'name', _defn
     ON CONFLICT ON CONSTRAINT srce_pkey DO UPDATE
         SET
             defn = _defn;
-    
-
-    
-    _message = 
-        $$
-                {
-    "message": "definition set",
-    "status": "success"
-}
-        $$: :jsonb;
-    return _message;
 
 END;
 $f$

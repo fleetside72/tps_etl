@@ -11,7 +11,7 @@ COMMENT ON SCHEMA tps IS 'third party source views';
 
 DROP USER IF EXISTS api;
 
-CREATE USER api WITH
+CREATE ROLE api WITH
 	LOGIN
 	NOSUPERUSER
 	NOCREATEDB
@@ -22,6 +22,9 @@ CREATE USER api WITH
 	ENCRYPTED PASSWORD 'md56da13b696f737097e0146e47cc0d0985';
 
 -----need to setup all database objects and then grant priveledges to api----------------------------------------------------------------------------
+
+--grant schema USAGE
+GRANT USAGE ON SCHEMA tps TO api;
 
 --grant current table privledges
 GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA tps TO api;
