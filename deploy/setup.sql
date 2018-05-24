@@ -69,7 +69,8 @@ COMMENT ON TABLE tps.map_rv IS 'return value lookup table';
 
 CREATE TABLE tps.srce (
     srce text NOT NULL,
-    defn jsonb
+    defn jsonb,
+    hist jsonb
 );
 COMMENT ON TABLE tps.srce IS 'source master listing and definition';
 
