@@ -13,7 +13,7 @@ BEGIN
     BEGIN
 
         INSERT INTO
-            tps.map_rm
+            tps.map_rm (srce, target, regex, seq, hist)
         SELECT
             --data source
             _defn->>'srce'
@@ -22,7 +22,7 @@ BEGIN
             --map definition
             ,_defn
             --map aggregation sequence
-            ,_defn->>'sequence'
+            ,(_defn->>'sequence')::INTEGER
             --history definition
             ,jsonb_build_object(
                 'hist_defn',_defn
@@ -32,7 +32,7 @@ BEGIN
             srce = _defn->>'srce'
             ,target = _defn->>'name'
             ,regex = _defn
-            ,seq = _defn->>'sequence'
+            ,seq = (_defn->>'sequence')::INTEGER
             ,hist = 
                     --the new definition going to position -0-
                     jsonb_build_object(
