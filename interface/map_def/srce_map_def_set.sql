@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION tps.srce_map_def_set(_srce text, _map text, _defn jsonb, _seq int) RETURNS jsonb
+CREATE OR REPLACE FUNCTION tps.srce_map_def_set(_defn jsonb) RETURNS jsonb
 AS
 $f$
 
@@ -15,15 +15,15 @@ BEGIN
         INSERT INTO
             tps.map_rm
         SELECT
-            _srce
-            ,_map
+            _defn->>'srce'
+            ,_defn->>'name'
             ,_defn
-            ,_seq
+            ,_defn->>'sequence'
         ON CONFLICT ON CONSTRAINT map_rm_pk DO UPDATE SET
-            srce = _srce
-            ,target = _map
+            srce = _defn->>'srce'
+            ,target = _defn->>'name'
             ,regex = _defn
-            ,seq = _seq;
+            ,seq = _defn->>'sequence';
 
     EXCEPTION WHEN OTHERS THEN
 
