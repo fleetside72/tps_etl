@@ -51,7 +51,8 @@ CREATE TABLE tps.map_rm (
     srce text NOT NULL,
     target text NOT NULL,
     regex jsonb,
-    seq integer NOT NULL
+    seq integer NOT NULL,
+    hist jsonb
 );
 COMMENT ON TABLE tps.map_rm IS 'regex map instructions';
 

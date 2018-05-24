@@ -15,15 +15,36 @@ BEGIN
         INSERT INTO
             tps.map_rm
         SELECT
+            --data source
             _defn->>'srce'
+            --map name
             ,_defn->>'name'
+            --map definition
             ,_defn
+            --map aggregation sequence
             ,_defn->>'sequence'
+            --history definition
+            ,jsonb_build_object(
+                'hist_defn',_defn
+                ,'effective',jsonb_build_array(CURRENT_TIMESTAMP,null::timestamptz)
+            ) || '[]'::jsonb
         ON CONFLICT ON CONSTRAINT map_rm_pk DO UPDATE SET
             srce = _defn->>'srce'
             ,target = _defn->>'name'
             ,regex = _defn
-            ,seq = _defn->>'sequence';
+            ,seq = _defn->>'sequence'
+            ,hist = 
+                    --the new definition going to position -0-
+                    jsonb_build_object(
+                        'hist_defn',_defn
+                        ,'effective',jsonb_build_array(CURRENT_TIMESTAMP,null::timestamptz)
+                    ) 
+                    --the previous definition, set upper bound of effective range which was previously null
+                    || jsonb_set(
+                        map_rm.hist
+                        ,'{0,effective,1}'::text[]
+                        ,to_jsonb(CURRENT_TIMESTAMP)
+                    );
 
     EXCEPTION WHEN OTHERS THEN
 
