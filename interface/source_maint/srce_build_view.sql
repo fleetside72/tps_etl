@@ -1,14 +1,15 @@
-DO
+CREATE FUNCTION tps.build_srce_view_sql(_srce text, _schema text) RETURNS TEXT
+AS
 $f$
-DECLARE
+DECLARE	
+	--_schema text;
 	_path text[];
-	_srce text;
+	--_srce text;
 	_sql text;
-
 BEGIN
-	_path:= '{schemas,default}'::text[];
-	_srce:= 'dcard';
-
+    --_schema:= 'default';
+	_path:= ARRAY['schemas',_schema]::text[];
+	--_srce:= 'dcard';
 SELECT
 	'CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT '||string_agg('(rec#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''''
 INTO	
@@ -22,7 +23,9 @@ WHERE
 GROUP BY
 	srce.srce;
 
+RETURN _sql;
 RAISE NOTICE '%',_sql;
 
 END
-$f$;
+$f$
+LANGUAGE plpgsql;
