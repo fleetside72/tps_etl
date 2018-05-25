@@ -1,4 +1,4 @@
-CREATE FUNCTION tps.build_srce_view_sql(_srce text, _schema text) RETURNS TEXT
+CREATE OR REPLACE FUNCTION tps.build_srce_view_sql(_srce text, _schema text) RETURNS TEXT
 AS
 $f$
 DECLARE	
@@ -11,7 +11,7 @@ BEGIN
 	_path:= ARRAY['schemas',_schema]::text[];
 	--_srce:= 'dcard';
 SELECT
-	'CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT '||string_agg('(rec#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''''
+	'CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT '||string_agg('(allj#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''''
 INTO	
 	_sql
 FROM
