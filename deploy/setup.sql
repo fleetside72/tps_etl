@@ -85,7 +85,8 @@ CREATE TABLE tps.trans (
     parse jsonb,
     map jsonb,
     allj jsonb,
-    ic jsonb
+    ic jsonb,
+    logid INTEGER
 );
 COMMENT ON TABLE tps.trans IS 'source records';
 COMMENT ON COLUMN tps.trans.ic IS 'input constraint value';
@@ -150,6 +151,9 @@ ALTER TABLE ONLY tps.map_rv
 
 ALTER TABLE ONLY tps.trans
     ADD CONSTRAINT trans_srce_fkey FOREIGN KEY (srce) REFERENCES tps.srce(srce);
+
+ALTER TABLE ONLY tps.trans
+    ADD CONSTRAINT trans_logid_fkey FOREIGN KEY (logid) REFERENCES tps.trans_log(id);
 
 -------------create functions------------------------------------------------------------------------------------------------------------------------
 
@@ -969,28 +973,7 @@ BEGIN
         matched_keys
     )
 
-    -----------insert pending rows that have key with no trans match-----------------------------------------------------------------------------------
-    --need to look into mapping the transactions prior to loading
-
-    , inserted AS (
-        INSERT INTO
-            tps.trans (srce, rec, ic)
-        SELECT
-            pl.srce
-            ,pl.rec
-            ,pl.json_key
-        FROM 
-            pending_list pl
-            INNER JOIN unmatched_keys u ON
-                u.json_key = pl.json_key
-        ORDER BY
-            pl.id ASC
-        ----this conflict is only if an exact duplicate rec json happens, which will be rejected
-        ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
-        RETURNING *
-    )
-
-    --------summarize records not inserted-------------------+------------------------------------------------------------------------------------------------
+    --------build log record-------------------+------------------------------------------------------------------------------------------------
 
     , logged AS (
     INSERT INTO
@@ -1016,6 +999,29 @@ BEGIN
             )
         )
     RETURNING *
+    )
+
+    -----------insert pending rows that have key with no trans match-----------------------------------------------------------------------------------
+    --need to look into mapping the transactions prior to loading
+
+    , inserted AS (
+        INSERT INTO
+            tps.trans (srce, rec, ic, logid)
+        SELECT
+            pl.srce
+            ,pl.rec
+            ,pl.json_key
+            ,logged.id
+        FROM 
+            pending_list pl
+            INNER JOIN unmatched_keys u ON
+                u.json_key = pl.json_key
+            CROSS JOIN logged
+        ORDER BY
+            pl.id ASC
+        ----this conflict is only if an exact duplicate rec json happens, which will be rejected
+        ----therefore, records may not be inserted due to ay matches with certain json fields, or if the entire json is a duplicate, reason is not specified
+        RETURNING *
     )
 
     SELECT
