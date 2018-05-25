@@ -1,10 +1,6 @@
 {
-    "unique_constraint": {
-        "{doc,origin_addresses}": [
-            "Washington, DC, USA"
-        ],
-        "{doc,destination_addresses}": [
-            "New York, NY, USA"
-        ]
-    }
+    "constraint": [
+        "{doc,origin_addresses}",
+        "{doc,destination_addresses}"
+    ]
 }
