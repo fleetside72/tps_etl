@@ -28,11 +28,11 @@ FROM
                 "type": "numeric",
                 "column_name": "duration"
             }
-        ],
-        "constraint": [
-            "{doc}"
         ]
-    }
+    },
+    "constraint": [
+        "{doc}"
+    ]
 }
     $$
 ) r(x);
