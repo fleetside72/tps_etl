@@ -7,28 +7,6 @@ $f$
     BEGIN
         IF (TG_OP = 'INSERT') THEN
 
-            --------determine if there are any maps for the source involved----
-            SELECT
-                COALESCE(COUNT(*),0)
-            INTO
-                _cnt
-            FROM
-                tps.map_rm m
-                INNER JOIN new_table t ON
-                    t.srce = m.srce;
-
-            ---------if there are no maps then set allj to rec and exit---------
-            IF _cnt = 0 THEN
-                UPDATE
-                    tps.trans t
-                SET
-                    allj = n.rec
-                FROM
-                    new_table n
-                WHERE
-                    t.id = n.id;
-                RETURN NULL;
-            END IF;
 
             WITH
             --------------------apply regex operations to transactions-----------------------------------------------------------------------------------
@@ -233,19 +211,34 @@ $f$
             )
 
             --SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
+            
+            --create a complete list of all new inserts assuming some do not have maps (left join)
+            ,join_all AS (
+                SELECT
+                    n.srce
+                    ,n.id
+                    ,n.rec
+                    ,a.retain_val parse
+                    ,a.map
+                    ,n.rec||COALESCE(a.map||a.retain_val,'{}'::jsonb) allj
+                FROM
+                    new_table n
+                    LEFT OUTER JOIN agg_to_id a ON
+                        a.id = n.id
+            )
 
-
-
+            --update trans with join_all recs
             UPDATE
                 tps.trans t
             SET
-                map = o.map,
-                parse = o.retain_val,
-                allj = t.rec||o.map||o.retain_val
+                parse = a.parse
+                ,map = a.map
+                ,allj = a.allj
             FROM
-                agg_to_id o
+               join_all a
             WHERE
-                o.id = t.id;
+                t.id = a.id;
+                
 
         END IF;
         RETURN NULL;
