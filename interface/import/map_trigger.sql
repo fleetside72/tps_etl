@@ -1,6 +1,13 @@
-CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
+CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER 
+AS 
+$f$
+    DECLARE
+        _cnt INTEGER;
+
     BEGIN
         IF (TG_OP = 'INSERT') THEN
+
+
             WITH
             --------------------apply regex operations to transactions-----------------------------------------------------------------------------------
 
@@ -204,19 +211,34 @@ CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
             )
 
             --SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
+            
+            --create a complete list of all new inserts assuming some do not have maps (left join)
+            ,join_all AS (
+                SELECT
+                    n.srce
+                    ,n.id
+                    ,n.rec
+                    ,a.retain_val parse
+                    ,a.map
+                    ,n.rec||COALESCE(a.map||a.retain_val,'{}'::jsonb) allj
+                FROM
+                    new_table n
+                    LEFT OUTER JOIN agg_to_id a ON
+                        a.id = n.id
+            )
 
-
-
+            --update trans with join_all recs
             UPDATE
                 tps.trans t
             SET
-                map = o.map,
-                parse = o.retain_val,
-                allj = t.rec||o.map||o.retain_val
+                parse = a.parse
+                ,map = a.map
+                ,allj = a.allj
             FROM
-                agg_to_id o
+               join_all a
             WHERE
-                o.id = t.id;
+                t.id = a.id;
+                
 
         END IF;
         RETURN NULL;

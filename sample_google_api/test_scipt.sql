@@ -5,24 +5,38 @@ SELECT
     jsonb_pretty(r.x) 
 FROM
     tps.srce_set(
-    'DMAPI',
     $$
-    {
-        "name": "DMAPI",
-        "type": "csv",
-        "schema": [
+{
+    "name": "DMAPI",
+    "type": "csv",
+    "schemas": {
+        "default": [
             {
-                "key": "doc",
-                "type": "jsonb"
+                "path": "{doc,origin_addresses,0}",
+                "type": "text",
+                "column_name": "origin_address"
+            },
+            {
+                "path": "{doc,destination_addresses,0}",
+                "type": "text",
+                "column_name": "destination_address"
+            },
+            {
+                "path": "{doc,rows,0,elements,0,distance,value}",
+                "type": "numeric",
+                "column_name": "distince"
+            },
+            {
+                "path": "{doc,rows,0,elements,0,duration,value}",
+                "type": "numeric",
+                "column_name": "duration"
             }
         ],
-        "unique_constraint": {
-            "type": "key",
-            "fields": [
-            	"{doc}"
-            ]
-        }
+        "constraint": [
+            "{doc}"
+        ]
     }
+}
     $$
 ) r(x);
 --------------------------build a csv file---------------------
@@ -32,26 +46,33 @@ copy
 select
 $$
 {
-   "destination_addresses" : [ "New York, NY, USA" ],
-   "origin_addresses" : [ "Washington, DC, USA" ],
-   "rows" : [
-      {
-         "elements" : [
+    "id": 1,
+    "doc": {
+        "rows": [
             {
-               "distance" : {
-                  "text" : "225 mi",
-                  "value" : 361940
-               },
-               "duration" : {
-                  "text" : "3 hours 50 mins",
-                  "value" : 13812
-               },
-               "status" : "OK"
+                "elements": [
+                    {
+                        "status": "OK",
+                        "distance": {
+                            "text": "225 mi",
+                            "value": 361940
+                        },
+                        "duration": {
+                            "text": "3 hours 50 mins",
+                            "value": 13812
+                        }
+                    }
+                ]
             }
-         ]
-      }
-   ],
-   "status" : "OK"
+        ],
+        "status": "OK",
+        "origin_addresses": [
+            "Washington, DC, USA"
+        ],
+        "destination_addresses": [
+            "New York, NY, USA"
+        ]
+    }
 }
 $$::JSONB DOC
 )

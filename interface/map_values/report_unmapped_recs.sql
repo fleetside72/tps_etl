@@ -1,7 +1,27 @@
-\timing
+DROP FUNCTION IF EXISTS tps.report_unmapped_recs;
+CREATE FUNCTION tps.report_unmapped_recs(_srce text) RETURNS TABLE 
+(
+    source text, 
+    map text,
+    ret_val jsonb,
+    "count" bigint,
+    recs jsonb
+
+)
+LANGUAGE plpgsql
+AS
+$f$ 
+BEGIN
+
+/*
+first get distinct target json values
+then apply regex
+*/
+
+RETURN QUERY
 WITH
 
---------------------apply regex operations to transactions-----------------------------------------------------------------------------------
+--------------------apply regex operations to transactions---------------------------------------------------------------------------------
 
 rx AS (
 SELECT 
@@ -21,12 +41,14 @@ SELECT
     COALESCE(mt.rn,rp.rn,1) result_number,
     mt.mt rx_match,
     rp.rp rx_replace,
+    --------------------------json key name assigned to return value-----------------------------------------------------------------------
     CASE e.v->>'map'
         WHEN 'y' THEN
             e.v->>'field'
         ELSE
             null
     END map_key,
+    --------------------------json value resulting from regular expression-----------------------------------------------------------------
     CASE e.v->>'map'
         WHEN 'y' THEN
             CASE regex->>'function'
@@ -43,12 +65,14 @@ SELECT
         ELSE
             NULL
     END map_val,
+    --------------------------flag for if retruned regex result is stored as a new part of the final json output---------------------------
     CASE e.v->>'retain'
         WHEN 'y' THEN
             e.v->>'field'
         ELSE
             NULL
     END retain_key,
+    --------------------------push regex result into json object---------------------------------------------------------------------------
     CASE e.v->>'retain'
         WHEN 'y' THEN
             CASE regex->>'function'
@@ -66,35 +90,45 @@ SELECT
             NULL
     END retain_val
 FROM 
+    --------------------------start with all regex maps------------------------------------------------------------------------------------
     tps.map_rm m
-    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+    --------------------------isolate matching basis to limit map to only look at certain json---------------------------------------------
+    JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+    --------------------------break out array of regluar expressions in the map------------------------------------------------------------
+    JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
+    --------------------------join to main transaction table but only certain key/values are included--------------------------------------
     INNER JOIN tps.trans t ON 
         t.srce = m.srce AND
         t.rec @> w.v
-    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
+    --------------------------each regex references a path to the target value, extract the target from the reference and do regex---------
     LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
         m.regex->>'function' = 'extract'
+    --------------------------same as above but for a replacement type function------------------------------------------------------------
     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
         m.regex->>'function' = 'replace'
 WHERE
     --t.allj IS NULL
-    t.srce = 'DCARD'
+    t.srce = _srce AND
+    e.v @> '{"map":"y"}'::jsonb
     --rec @> '{"Transaction":"ACH Credits","Transaction":"ACH Debits"}'
     --rec @> '{"Description":"CHECK 93013270 086129935"}'::jsonb
+/*
 ORDER BY 
     t.id DESC,
     m.target,
     e.rn,
     COALESCE(mt.rn,rp.rn,1)
+*/
 )
 
---SELECT count(*) FROM rx LIMIT 100
+--SELECT * FROM rx LIMIT 100
 
 
 , agg_to_target_items AS (
 SELECT 
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -124,7 +158,7 @@ SELECT
                 retain_key,
                 CASE WHEN max(result_number) = 1
                     THEN
-                        jsonb_agg(retain_val ORDER BY result_number) -> 0
+                            jsonb_agg(retain_val ORDER BY result_number) -> 0
                     ELSE
                         jsonb_agg(retain_val ORDER BY result_number)
                 END
@@ -135,6 +169,7 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -153,6 +188,7 @@ GROUP BY
 SELECT
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
@@ -163,61 +199,65 @@ FROM
 GROUP BY
     srce
     ,id
+    ,rec
     ,target
     ,seq
     ,map_intention
-ORDER BY
-    id
 )
 
 
---SELECT * FROM agg_to_target
-
+, agg_to_ret AS (
+SELECT
+	srce
+	,target
+	,seq
+	,map_intention
+	,map_val
+	,retain_val
+	,count(*) "count"
+    ,jsonb_agg(rec) rec
+FROM 
+	agg_to_target
+GROUP BY
+	srce
+	,target
+	,seq
+	,map_intention
+	,map_val
+	,retain_val
+)
 
 , link_map AS (
 SELECT
     a.srce
-    ,a.id
     ,a.target
     ,a.seq
     ,a.map_intention
     ,a.map_val
-    ,a.retain_val retain_value
-    ,v.map
+    ,a."count"
+    ,a.rec
+    ,a.retain_val
+    ,v.map mapped_val
 FROM
-    agg_to_target a
+    agg_to_ret a
     LEFT OUTER JOIN tps.map_rv v ON
         v.srce = a.srce AND
         v.target = a.target AND
         v.retval = a.map_val
 )
-
---SELECT * FROM link_map
-
-, agg_to_id AS (
 SELECT
-    srce
-    ,id
-    ,tps.jsonb_concat_obj(COALESCE(retain_value,'{}'::jsonb) ORDER BY seq DESC) retain_val
-    ,tps.jsonb_concat_obj(COALESCE(map,'{}'::jsonb)) map
+    l.srce
+    ,l.target
+    ,l.map_val
+    ,l."count"
+    ,l.rec
 FROM
-    link_map
-GROUP BY
-    srce
-    ,id
-)
-
---SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
-
-
-
-UPDATE
-    tps.trans t
-SET
-    map = o.map,
-    parse = o.retain_val,
-    allj = t.rec||o.map||o.retain_val
-FROM
-    agg_to_id o
+    link_map l
 WHERE
-    o.id = t.id;
+    l.mapped_val IS NULL
+ORDER BY
+    l.srce
+    ,l.target
+    ,l."count" desc;
+END;
+$f$

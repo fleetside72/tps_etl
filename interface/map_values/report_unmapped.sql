@@ -1,4 +1,26 @@
-DROP FUNCTION tps.report_unmapped;
+CREATE OR REPLACE FUNCTION tps.jsonb_concat(
+    state jsonb,
+    concat jsonb)
+  RETURNS jsonb AS
+$BODY$
+BEGIN
+	--RAISE notice 'state is %', state;
+	--RAISE notice 'concat is %', concat;
+	RETURN state || concat;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+DROP AGGREGATE IF EXISTS tps.jsonb_concat_obj(jsonb);
+CREATE AGGREGATE tps.jsonb_concat_obj(jsonb) (
+  SFUNC=tps.jsonb_concat,
+  STYPE=jsonb,
+  INITCOND='{}'
+);
+
+
+DROP FUNCTION IF EXISTS tps.report_unmapped;
 CREATE FUNCTION tps.report_unmapped(_srce text) RETURNS TABLE 
 (
     source text, 

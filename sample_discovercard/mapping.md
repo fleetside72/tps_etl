@@ -98,8 +98,7 @@ FROM
         ],
         "name": "First 20",
         "where": [
-            {"Category":"Restaurantes"},
-            {"Category":"Services"}
+            {}
         ],
         "function": "extract",
         "description": "pull first 20 characters from description for mapping"

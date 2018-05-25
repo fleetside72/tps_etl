@@ -1,0 +1,134 @@
+[
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "DISCOUNT DRUG MART 3"
+        },
+        "mapped": {
+            "party": "Discount Drug Mart",
+            "reason": "groceries"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "TARGET STOW OH"
+        },
+        "mapped": {
+            "party": "Target",
+            "reason": "groceries"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "WALMART GROCERY 800-"
+        },
+        "mapped": {
+            "party": "Walmart",
+            "reason": "groceries"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "CIRCLE K 05416 STOW "
+        },
+        "mapped": {
+            "party": "Circle K",
+            "reason": "gasoline"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "TARGET.COM * 800-591"
+        },
+        "mapped": {
+            "party": "Target",
+            "reason": "home supplies"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "ACME NO. 17 STOW OH"
+        },
+        "mapped": {
+            "party": "Acme",
+            "reason": "groceries"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "AT&T *PAYMENT 800-28"
+        },
+        "mapped": {
+            "party": "AT&T",
+            "reason": "internet"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "AUTOZONE #0722 STOW "
+        },
+        "mapped": {
+            "party": "Autozone",
+            "reason": "auto maint"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "BESTBUYCOM8055267948"
+        },
+        "mapped": {
+            "party": "BestBuy",
+            "reason": "home supplies"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "BUFFALO WILD WINGS K"
+        },
+        "mapped": {
+            "party": "Buffalo Wild Wings",
+            "reason": "restaurante"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "CASHBACK BONUS REDEM"
+        },
+        "mapped": {
+            "party": "Discover Card",
+            "reason": "financing"
+        }
+    },
+    {
+        "source": "dcard",
+        "map": "First 20",
+        "ret_val": {
+            "f20": "CLE CLINIC PT PMTS 2"
+        },
+        "mapped": {
+            "party": "Cleveland Clinic",
+            "reason": "medical"
+        }
+    }
+]
