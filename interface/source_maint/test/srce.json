@@ -4,7 +4,8 @@
     "loading_function":"csv",
     "constraint":[
         "{Trans. Date}",
-        "{Post Date}"
+        "{Post Date}",
+        "{Description}"
     ],
     "schemas":{
         "default":[

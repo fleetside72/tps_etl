@@ -10,7 +10,7 @@ FROM
                     {
                         "key": "{Description}",
                         "map": "y",
-                        "flag": "g",
+                        "flag": "",
                         "field": "f20",
                         "regex": ".{1,20}",
                         "retain": "y"
