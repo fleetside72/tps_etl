@@ -1,6 +1,35 @@
-CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
+CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER 
+AS 
+$f$
+    DECLARE
+        _cnt INTEGER;
+
     BEGIN
         IF (TG_OP = 'INSERT') THEN
+
+            --------determine if there are any maps for the source involved----
+            SELECT
+                COALESCE(COUNT(*),0)
+            INTO
+                _cnt
+            FROM
+                tps.map_rm m
+                INNER JOIN new_table t ON
+                    t.srce = m.srce;
+
+            ---------if there are no maps then set allj to rec and exit---------
+            IF _cnt = 0 THEN
+                UPDATE
+                    tps.trans t
+                SET
+                    allj = n.rec
+                FROM
+                    new_table n
+                WHERE
+                    t.id = n.id;
+                RETURN NULL;
+            END IF;
+
             WITH
             --------------------apply regex operations to transactions-----------------------------------------------------------------------------------
 
