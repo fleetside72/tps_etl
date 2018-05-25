@@ -31,7 +31,8 @@ FROM
         ]
     },
     "constraint": [
-        "{doc}"
+        "{doc,origin_addresses}",
+        "{doc,destination_addresses}"
     ]
 }
     $$
