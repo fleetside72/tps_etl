@@ -179,7 +179,7 @@ BEGIN
     FROM
         logged;
 
-    RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
+    --RAISE NOTICE 'import logged under id# %, info: %', _log_id, _log_info;
 
     _message:= 
     (
