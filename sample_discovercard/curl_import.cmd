@@ -1,0 +1,1 @@
+curl -v -F upload=@./data.csv http://localhost:81/import?srce=dcard

@@ -25,6 +25,7 @@ CREATE ROLE api WITH
 
 --grant schema USAGE
 GRANT USAGE ON SCHEMA tps TO api;
+GRANT USAGE ON SCHEMA tpsv TO api;
 
 --grant current table privledges
 GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA tps TO api;

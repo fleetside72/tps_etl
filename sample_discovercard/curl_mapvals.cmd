@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X POST -d@./vals.json http://localhost:81/mapval_set
