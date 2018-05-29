@@ -1,0 +1,193 @@
+{
+  "name": "paycom",
+  "source": "client_file",
+  "loading_function": "csv",
+  "unique_constraint": {
+    "type": "key",
+    "fields": ["{transaction}", "{loc_code}", "{perd_start}", "{perd_end}"]
+  },
+  "schemas": {
+    "default": [
+      {
+        "key": "perd_start",
+        "type": "date",
+        "column_name": "perd_start"
+      },
+      {
+        "key": "perd_end",
+        "type": "date",
+        "column_name": "perd_end"
+      },
+      {
+        "key": "check_date",
+        "type": "date",
+        "column_name": "check_date"
+      },
+      {
+        "key": "loc_code",
+        "type": "text",
+        "column_name": "loc_code"
+      },
+      {
+        "key": "loc_descr",
+        "type": "text",
+        "column_name": "loc_descr"
+      },
+      {
+        "key": "loc_glseg",
+        "type": "text",
+        "column_name": "loc_glseg"
+      },
+      {
+        "key": "loc_over",
+        "type": "text",
+        "column_name": "loc_over"
+      },
+      {
+        "key": "dep_code",
+        "type": "text",
+        "column_name": "dep_code"
+      },
+      {
+        "key": "dep_descr",
+        "type": "text",
+        "column_name": "dep_descr"
+      },
+      {
+        "key": "dep_nat",
+        "type": "text",
+        "column_name": "dep_nat"
+      },
+      {
+        "key": "dep_over",
+        "type": "text",
+        "column_name": "dep_over"
+      },
+      {
+        "key": "di_code",
+        "type": "text",
+        "column_name": "di_code"
+      },
+      {
+        "key": "di_descr",
+        "type": "text",
+        "column_name": "di_descr"
+      },
+      {
+        "key": "di_glseg",
+        "type": "text",
+        "column_name": "di_glseg"
+      },
+      {
+        "key": "di_over",
+        "type": "text",
+        "column_name": "di_over"
+      },
+      {
+        "key": "title_code",
+        "type": "text",
+        "column_name": "titel_code"
+      },
+      {
+        "key": "title_descr",
+        "type": "text",
+        "column_name": "title_descr"
+      },
+      {
+        "key": "title_glseg",
+        "type": "text",
+        "column_name": "title_glseg"
+      },
+      {
+        "key": "title_over",
+        "type": "text",
+        "column_name": "title_over"
+      },
+      {
+        "key": "ee_code",
+        "type": "text",
+        "column_name": "ee_code"
+      },
+      {
+        "key": "ee_glseg",
+        "type": "text",
+        "column_name": "ee_glseg"
+      },
+      {
+        "key": "ee_over",
+        "type": "text",
+        "column_name": "ee_over"
+      },
+      {
+        "key": "acct_type_code",
+        "type": "text",
+        "column_name": "acct_type_code"
+      },
+      {
+        "key": "hours",
+        "type": "numeric",
+        "column_name": "hours"
+      },
+      {
+        "key": "nat_code",
+        "type": "text",
+        "column_name": "nat_code"
+      },
+      {
+        "key": "nat_over",
+        "type": "text",
+        "column_name": "nat_over"
+      },
+      {
+        "key": "gl_ref",
+        "type": "text",
+        "column_name": "gl_ref"
+      },
+      {
+        "key": "gl_group",
+        "type": "text",
+        "column_name": "gl_group"
+      },
+      {
+        "key": "gl_descr",
+        "type": "text",
+        "column_name": "gl_descr"
+      },
+      {
+        "key": "gl_code",
+        "type": "text",
+        "column_name": "gl_code"
+      },
+      {
+        "key": "gl_amount",
+        "type": "numeric",
+        "column_name": "gl_amount"
+      },
+      {
+        "key": "pp_code",
+        "type": "text",
+        "column_name": "pp_code"
+      },
+      {
+        "key": "pp_descr",
+        "type": "text",
+        "column_name": "pp_descr"
+      },
+      {
+        "key": "pp_gl",
+        "type": "text",
+        "column_name": "pp_gl"
+      },
+      {
+        "key": "pp_over",
+        "type": "text",
+        "column_name": "pp_over"
+      },
+      {
+        "key": "transaction",
+        "type": "text",
+        "column_name": "transaction"
+      }
+    ]
+  }
+}
