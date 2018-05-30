@@ -1,1 +1,1 @@
-curl -H "Content-Type: application/json" -X POST -d@./vals.json http://localhost:81/mapval_set
+curl -H "Content-Type: application/json" -X POST -d@//mnt/c/Users/fleet/Documents/tps_etl/reload/mapval.json http://localhost:81/mapval_set
