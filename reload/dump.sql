@@ -1,0 +1,1 @@
+copy (select r.* from tps.trans join lateral jsonb_populate_record(null::tps.dcard, rec) r on true where srce = 'DCARD') to 'C:\users\fleet\downloads\dcard.csv' with (format csv, header true);
