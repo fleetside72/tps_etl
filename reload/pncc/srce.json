@@ -1,5 +1,5 @@
 {
-    "name": "pncc",
+    "name": "PNCC",
     "source": "client_file",
     "loading_function": "csv",
     "constraint": [
@@ -8,57 +8,57 @@
     "schemas": {
         "default": [
             {
-                "path": "AsOfDate",
+                "path": "{AsOfDate}",
                 "type": "date",
                 "column_name": "AsOfDate"
             },
             {
-                "path": "BankId",
+                "path": "{BankId}",
                 "type": "text",
                 "column_name": "BankId"
             },
             {
-                "path": "AccountNumber",
+                "path": "{AccountNumber}",
                 "type": "text",
                 "column_name": "AccountNumber"
             },
             {
-                "path": "AccountName",
+                "path": "{AccountName}",
                 "type": "text",
                 "column_name": "AccountName"
             },
             {
-                "path": "BaiControl",
+                "path": "{BaiControl}",
                 "type": "text",
                 "column_name": "BaiControl"
             },
             {
-                "path": "Currency",
+                "path": "{Currency}",
                 "type": "text",
                 "column_name": "Currency"
             },
             {
-                "path": "Transaction",
+                "path": "{Transaction}",
                 "type": "text",
                 "column_name": "Transaction"
             },
             {
-                "path": "Reference",
+                "path": "{Reference}",
                 "type": "text",
                 "column_name": "Reference"
             },
             {
-                "path": "Amount",
+                "path": "{Amount}",
                 "type": "text",
                 "column_name": "Amount"
             },
             {
-                "path": "Description",
+                "path":"{Description}",
                 "type": "text",
                 "column_name": "Description"
             },
             {
-                "path": "AdditionalRemittance",
+                "path": "{AdditionalRemittance}",
                 "type": "text",
                 "column_name": "AdditionalRemittance"
             }

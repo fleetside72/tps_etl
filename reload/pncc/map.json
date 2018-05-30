@@ -1,22 +1,455 @@
-{
-    "srce": "PNCC",
-    "name": "Check Number",
-    "regex": {
-        "defn": [
-            {
-                "key": "{Description}",
-                "map": "n",
-                "field": "checkn",
-                "regex": "[^0-9]*([0-9]*)\\s|$",
-                "retain": "y"
-            }
-        ],
-        "where": [
-            {
-                "Transaction": "Checks Paid"
-            }
-        ],
-        "function": "extract"
+[
+    {
+        "name": "Check Number",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "field": "checkn",
+                    "regex": "[^0-9]*([0-9]*)\\s|$",
+                    "retain": "y"
+                }
+            ],
+            "where": [
+                {
+                    "Transaction": "Checks Paid"
+                }
+            ],
+            "function": "extract"
+        },
+        "sequence": 2
     },
-    "sequence": 2
-}
+    {
+        "name": "Strip Amount Commas",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Amount}",
+                    "map": "n",
+                    "flag": "g",
+                    "field": "amount",
+                    "regex": ",",
+                    "retain": "y",
+                    "replace": ""
+                }
+            ],
+            "name": "Strip Amount Commas",
+            "where": [
+                {}
+            ],
+            "function": "replace",
+            "description": "the Amount field come from PNC with commas embeded so it cannot be cast to numeric"
+        },
+        "sequence": 1
+    },
+    {
+        "name": "Trans Type",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{AccountName}",
+                    "map": "y",
+                    "field": "acctn",
+                    "regex": "(.*)",
+                    "retain": "n"
+                },
+                {
+                    "key": "{Transaction}",
+                    "map": "y",
+                    "field": "trans",
+                    "regex": "(.*)",
+                    "retain": "n"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "y",
+                    "field": "ini",
+                    "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)",
+                    "retain": "y"
+                }
+            ],
+            "name": "Trans Type",
+            "where": [
+                {}
+            ],
+            "function": "extract",
+            "description": "extract intial description in conjunction with account name and transaction type for mapping"
+        },
+        "sequence": 1
+    },
+    {
+        "name": "Currency",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "map": "y",
+                    "field": "ini",
+                    "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "y",
+                    "field": "curr1",
+                    "regex": ".*(DEBIT|CREDIT).*(USD|CAD).*(?=DEBIT|CREDIT).*(?=USD|CAD).*",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "y",
+                    "field": "curr2",
+                    "regex": ".*(?=DEBIT|CREDIT).*(?=USD|CAD).*(DEBIT|CREDIT).*(USD|CAD).*",
+                    "retain": "y"
+                }
+            ],
+            "name": "Currency",
+            "where": [
+                {
+                    "Transaction": "Miscellaneous Credits"
+                },
+                {
+                    "Transaction": "Miscellaneous Debits"
+                }
+            ],
+            "function": "extract",
+            "description": "pull out currency indicators from description of misc items and map"
+        },
+        "sequence": 2
+    },
+    {
+        "name": "Parse ACH Credits",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "beneficiary",
+                    "regex": "Comp Name:(.+?)(?=\\d{6} Com|SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Cust ID",
+                    "regex": "Cust ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Desc",
+                    "regex": "Desc:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "originator",
+                    "regex": "Cust Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Batch Discr",
+                    "regex": "Batch Discr:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Comp ID",
+                    "regex": "Comp ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Addenda",
+                    "regex": "Addenda:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "SETT",
+                    "regex": "SETT:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Date",
+                    "regex": "Date:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Time",
+                    "regex": "Time:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                }
+            ],
+            "name": "Parse ACH Credits",
+            "where": [
+                {
+                    "Transaction": "ACH Credits"
+                }
+            ],
+            "function": "extract",
+            "description": "parse select components of the description for ACH Credits Receieved"
+        },
+        "sequence": 2
+    },
+    {
+        "name": "Parse ACH Debits",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "originator",
+                    "regex": "Comp Name:(.+?)(?=\\d{6} Com|SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Cust ID",
+                    "regex": "Cust ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Desc",
+                    "regex": "Desc:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "beneficiary",
+                    "regex": "Cust Name:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Batch Discr",
+                    "regex": "Batch Discr:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Comp ID",
+                    "regex": "Comp ID:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Addenda",
+                    "regex": "Addenda:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "SETT",
+                    "regex": "SETT:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Date",
+                    "regex": "Date:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "Time",
+                    "regex": "Time:(.+?)(?=SEC:|Cust ID:|Desc:|Comp Name:|Comp ID:|Batch Discr:|Cust Name:|Addenda:|SETT:|Date:|Time:|$)",
+                    "retain": "y"
+                }
+            ],
+            "name": "Parse ACH Debits",
+            "where": [
+                {
+                    "Transaction": "ACH Debits"
+                }
+            ],
+            "function": "extract",
+            "description": "parse select components of the description for ACH Credits Receieved"
+        },
+        "sequence": 2
+    },
+    {
+        "name": "Parse Wires",
+        "srce": "PNCC",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "g",
+                    "field": "dparse",
+                    "regex": "([A-Z]{3,}?:)(.*)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "beneficiary_components",
+                    "regex": "BENEFICIARY:(.*?)AC/([\\d-]*) (.*)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "originator_components",
+                    "regex": "ORIGINATOR:(.*?)AC/(\\d*) (.*)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "beneficiary",
+                    "regex": "BENEFICIARY:(.*?)AC/[\\d-]* .*(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "originator",
+                    "regex": "ORIGINATOR:(.*?)AC/\\d* .*(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "OBI",
+                    "regex": "OBI:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "RFB",
+                    "regex": "RFB:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "ABA",
+                    "regex": "ABA:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "BBI",
+                    "regex": "BBI:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "BENEBNK",
+                    "regex": "BENEBNK:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "IBK",
+                    "regex": "IBK:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "RATE",
+                    "regex": "RATE:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                },
+                {
+                    "key": "{Description}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "RECVBNK",
+                    "regex": "RECVBNK:(.*?)(?=[A-Z]{3,}?:|$)",
+                    "retain": "y"
+                }
+            ],
+            "name": "Parse Wires",
+            "where": [
+                {
+                    "Transaction": "Money Transfer DB - Wire"
+                },
+                {
+                    "Transaction": "Money Transfer DB - Other"
+                },
+                {
+                    "Transaction": "Money Transfer CR-Wire"
+                },
+                {
+                    "Transaction": "Money Transfer CR-Other"
+                },
+                {
+                    "Transaction": "Intl Money Transfer Debits"
+                },
+                {
+                    "Transaction": "Intl Money Transfer Credits"
+                }
+            ],
+            "function": "extract",
+            "description": "pull out whatever follows OBI in the description until atleast 3 capital letters followed by a colon are encountered"
+        },
+        "sequence": 2
+    }
+]
