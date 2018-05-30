@@ -1,23 +1,20 @@
 {
     "sequence": 1,
     "srce": "hunt",
-    "regex": {
-        "defn": [
-            {
-                "key": "{Memo}",
-                "map": "y",
-                "flag": "",
-                "field": "f20",
-                "regex": ".{1,20}",
-                "retain": "y"
-            }
-        ],
-        "name": "First 20",
-        "where": [
-            {}
-        ],
-        "function": "replace",
-        "description": "pull first 20 characters from description for mapping"
-    },
-    "target": "First 20"
+    "defn": [
+        {
+            "key": "{Memo}",
+            "map": "y",
+            "flag": "",
+            "field": "f20",
+            "regex": ".{1,20}",
+            "retain": "y"
+        }
+    ],
+    "name": "First 20",
+    "where": [
+        {}
+    ],
+    "function": "extract",
+    "description": "pull first 20 characters from description for mapping"
 }
