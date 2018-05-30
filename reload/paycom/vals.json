@@ -1,952 +1,139 @@
 [
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "-1",
-            "party": "PNC",
-            "ledger": "Manual",
-            "reason": "Bank Fees",
-            "trantype": "Disbursement"
+            "trial_bal": "65"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "CANADA TAX",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Detail Debit Adjustments"
+            "loc_code_rx": "SLS"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "-1",
-            "ledger": "AP - ACH",
-            "trantype": "Disbursement"
+            "trial_bal": "59"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "ACH DEBIT SETTLEMENT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ACH Debits"
+            "loc_code_rx": "SEB"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Returned Deposit RTM",
-            "trantype": "Collections"
+            "trial_bal": "93"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "RET DEP ITEM RTM",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Deposited Items Returned"
+            "loc_code_rx": "MDF"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Returned Deposit STOP",
-            "trantype": "Collections"
+            "trial_bal": "93"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "RET DEP ITEM STOP",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Deposited Items Returned"
+            "loc_code_rx": "ELY"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
+            "trial_bal": "93"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "CREDIT ADJUSTMENT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Detail Credit Adjustments"
+            "loc_code_rx": "TWN"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "Extract month and code",
         "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Returned Check",
-            "trantype": "Disbursement"
+            "trial_bal": "88"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "REFER TO MAKER OF CK RETURN CK",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Detail Credit Adjustments"
+            "loc_code_rx": "SPK"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Payroll Adjustment",
-            "trantype": "Disbursement"
+            "third_party": "PRINCIPAL LIFE P"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "DEBIT ADJUSTMENT",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "Detail Debit Adjustments"
+            "gl_group": "4.Liab",
+            "acct_type_code": "40P"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
+            "third_party": "PRINCIPAL LIFE P"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "DEPOSIT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Detail Deposits"
+            "gl_group": "4.Liab",
+            "acct_type_code": "CUF"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Wire",
-            "trantype": "Disbursement"
+            "third_party": "PRINCIPAL LIFE P"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "INTL WIRE OUT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Intl Money Transfer Debits"
+            "gl_group": "4.Liab",
+            "acct_type_code": "K4L"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Wire",
-            "trantype": "Disbursement"
+            "third_party": "PRINCIPAL LIFE P"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "INTL WIRES OUT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Intl Money Transfer Debits"
+            "gl_group": "5.Liab",
+            "acct_type_code": "40P"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
+            "third_party": "PRINCIPAL LIFE P"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "WHLS LBX DEP",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Lockbox Deposits"
+            "gl_group": "5.Liab",
+            "acct_type_code": "CUF"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
+            "third_party": "Basic NEO"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "WHLS LBX DEP932855",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Lockbox Deposits"
+            "gl_group": "4.Liab",
+            "acct_type_code": "FSA"
         }
     },
     {
-        "map": "Trans Type",
+        "map": "SUBSEQUENT PAYOUT",
         "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Revolver Advance",
-            "trantype": "Revolver Borrow"
+            "third_party": "Basic NEO"
         },
-        "source": "PNCC",
+        "source": "PAYCOM",
         "ret_val": {
-            "ini": "ADVANCE",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Miscellaneous Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "DEPOSIT:",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Misc Credit",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "MISC CREDIT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Miscellaneous Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Revolver Payment",
-            "trantype": "Revolver Borrow"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PAYMENT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Revolver Payment",
-            "trantype": "Revolver Payment"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PAYMENT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "INTTL WIRES IN",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Intl Money Transfer Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Revolver Advance",
-            "trantype": "Revolver Borrow"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PNC BANK- NJ LOAN PROCEEDS",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Money Transfer CR-Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Revolver Advance",
-            "trantype": "Revolver Borrow"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PNC BANK-PGH LOAN PROCEEDS",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Money Transfer CR-Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FED WIRE IN",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Money Transfer CR-Wire"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Returned Wires",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FED WIRE IN",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Money Transfer CR-Wire"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Returned Item",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "BOOK TRANSFER DEBIT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Money Transfer DB - Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Freight Wires",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FED WIRE OUT",
-            "acctn": "The HC Operating Company FREIG",
-            "trans": "Money Transfer DB - Wire"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Wire",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FED WIRE OUT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Money Transfer DB - Wire"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FED WIRE OUT",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "Money Transfer DB - Wire"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "ZBA Funding",
-            "trantype": "Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FUNDS TRANSFER FROM ACCT",
-            "acctn": "The HC Operating Company FREIG",
-            "trans": "ZBA Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "ZBA Funding",
-            "trantype": "Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FUNDS TRANSFER FROM ACCT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ZBA Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "ZBA Funding",
-            "trantype": "Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FUNDS TRANSFER FROM ACCT",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "ZBA Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "ZBA Funding",
-            "trantype": "Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FUNDS TRANSFER TO ACCT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ZBA Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "ZBA Funding",
-            "trantype": "Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "FUNDS TRANSFER TO ACCT",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "ZBA Debits"
-        }
-    },
-    {
-        "map": "Currency",
-        "mapped": {
-            "party": "The HC Canada Operating Company, Ltd.",
-            "ledger": "Manual",
-            "reason": "IC - Can to US Settlement",
-            "trantype": "Interco Collection"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "DEPOSIT:",
-            "curr1": [
-                "CREDIT",
-                "USD"
-            ],
-            "curr2": [
-                "DEBIT",
-                "CAD"
-            ]
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "party": "PNC",
-            "ledger": "Manual",
-            "reason": "Bank Fees",
-            "trantype": "Fees"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CORPORATE ACCOUNT ANALYSIS CHARGE",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Miscellaneous Fees"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "party": "PNC",
-            "ledger": "Manual",
-            "reason": "Bank Fees",
-            "trantype": "Fees"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PNC MERCHANT FINCL ADJ",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Fees"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Revolver Payment",
-            "trantype": "Revolver Payment"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "PNC BANK- NJ LOAN PMTS",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "WITHDRAWAL:",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Miscellaneous Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Returned Item",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "BOOK TRANSFER CREDIT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Money Transfer CR-Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Returned Item",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "BOOK TRANSFER CREDIT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Money Transfer CR-Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Returned Item",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "BOOK TRANSFER CREDIT GHFTDD DDA CREDIT",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Money Transfer CR-Other"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Payroll Credits",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "19UDV",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "ACH Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH CREDIT RECEIVED",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "ACH Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "Payroll Credits",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH CREDIT RECEIVED",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "ACH Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "reason": "AP ACH Returned",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH CREDIT RETURN",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ACH Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Auto ACH Out",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH DEBIT RECEIVED",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "ACH Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Auto ACH Out",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH DEBIT RECEIVED",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ACH Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Auto ACH Out",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH DEBIT RECEIVED",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "ACH Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Check Run",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CASHED CHECK",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Payroll Checks",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CASHED CHECK",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Freight Checks",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CHECK",
-            "acctn": "The HC Operating Company FREIG",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Check Run",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CHECK",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Payroll Checks",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CHECK",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Freight Checks",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "SUBSTITUTE CHK",
-            "acctn": "The HC Operating Company FREIG",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "AP - Check Run",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "SUBSTITUTE CHK",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Returned Deposit NSF",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "RET DEP ITEM NSF UN",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Deposited Items Returned"
-        }
-    },
-    {
-        "map": "Currency",
-        "mapped": {
-            "party": "The HC Canada Operating Company, Ltd.",
-            "ledger": "Manual",
-            "reason": "IC - US to CAN Settlement",
-            "trantype": "Interco Funding"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "WITHDRAWAL:",
-            "curr1": [
-                "DEBIT",
-                "USD"
-            ],
-            "curr2": [
-                "CREDIT",
-                "CAD"
-            ]
-        }
-    },
-    {
-        "map": "Currency",
-        "mapped": {
-            "party": "The HC Canada Operating Company, Ltd.",
-            "ledger": "Manual",
-            "reason": "IC - round-trip settlement return",
-            "trantype": "Interco Collection"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "DEPOSIT:",
-            "curr1": [
-                "CREDIT",
-                "USD"
-            ],
-            "curr2": [
-                "DEBIT",
-                "USD"
-            ]
-        }
-    },
-    {
-        "map": "Currency",
-        "mapped": {
-            "party": "The HC Canada Operating Company, Ltd.",
-            "ledger": "Manual",
-            "reason": "IC - Can to US Settlement",
-            "trantype": "Interco Collection"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "DEPOSIT:",
-            "curr1": [
-                "DEBIT",
-                "USD"
-            ],
-            "curr2": [
-                "CREDIT",
-                "CAD"
-            ]
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "Manual",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "DEPOSIT:",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "Miscellaneous Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "reason": "Payroll Checks",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "SUBSTITUTE CHK",
-            "acctn": "The HC Operating Company PAYR",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "manual",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH DEBIT RETURN",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ACH Debits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "manual",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "ACH CREDIT SETTLEMENT",
-            "acctn": "The HC Operating Company OPERA",
-            "trans": "ACH Credits"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "-1",
-            "ledger": "Manual",
-            "trantype": "Disbursement"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "CHECK",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Checks Paid"
-        }
-    },
-    {
-        "map": "Trans Type",
-        "mapped": {
-            "sign": "1",
-            "ledger": "AR - Collections",
-            "trantype": "Collections"
-        },
-        "source": "PNCC",
-        "ret_val": {
-            "ini": "POSTING CORRECTION RETURN CK",
-            "acctn": "The HC Operating Company FBO P",
-            "trans": "Detail Credit Adjustments"
+            "gl_group": "4.Liab",
+            "acct_type_code": "FSD"
         }
     }
 ]
