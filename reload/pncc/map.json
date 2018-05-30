@@ -1,0 +1,22 @@
+{
+    "srce": "PNCC",
+    "name": "Check Number",
+    "regex": {
+        "defn": [
+            {
+                "key": "{Description}",
+                "map": "n",
+                "field": "checkn",
+                "regex": "[^0-9]*([0-9]*)\\s|$",
+                "retain": "y"
+            }
+        ],
+        "where": [
+            {
+                "Transaction": "Checks Paid"
+            }
+        ],
+        "function": "extract"
+    },
+    "sequence": 2
+}
