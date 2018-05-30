@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X POST -d@./srce.json http://localhost:81/srce_set
