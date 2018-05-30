@@ -280,27 +280,29 @@ BEGIN
             tps.map_rm (srce, target, regex, seq, hist)
         SELECT
             --data source
-            _defn->>'srce'
+            ae.r->>'srce'
             --map name
-            ,_defn->>'name'
+            ,ae.r->>'name'
             --map definition
-            ,_defn->'regex'
+            ,ae.r->'regex'
             --map aggregation sequence
-            ,(_defn->>'sequence')::INTEGER
+            ,(ae.r->>'sequence')::INTEGER
             --history definition
             ,jsonb_build_object(
-                'hist_defn',_defn
+                'hist_defn',ae.r
                 ,'effective',jsonb_build_array(CURRENT_TIMESTAMP,null::timestamptz)
             ) || '[]'::jsonb
+        FROM
+            jsonb_array_elements(_defn) ae(r)
         ON CONFLICT ON CONSTRAINT map_rm_pk DO UPDATE SET
-            srce = _defn->>'srce'
-            ,target = _defn->>'name'
-            ,regex = _defn->'regex'
-            ,seq = (_defn->>'sequence')::INTEGER
+            srce = excluded.srce
+            ,target = excluded.target
+            ,regex = excluded.regex
+            ,seq = excluded.seq
             ,hist = 
                     --the new definition going to position -0-
                     jsonb_build_object(
-                        'hist_defn',_defn
+                        'hist_defn',excluded.regex
                         ,'effective',jsonb_build_array(CURRENT_TIMESTAMP,null::timestamptz)
                     ) 
                     --the previous definition, set upper bound of effective range which was previously null
