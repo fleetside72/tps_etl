@@ -1,0 +1,60 @@
+{
+    "name": "PNCO",
+    "source": "client_file",
+    "loading_function": "csv",
+    "constraint": [
+        "{Post Date}",
+        "{Effective Date}",
+        "{Loan#}",
+        "{Reference #}"
+    ],
+    "schemas": {
+        "default": [
+            {
+                "path": "{Loan#}",
+                "type": "text",
+                "column_name":"Loan#"
+            },
+            {
+                "path": "{Post Date}",
+                "type": "date",
+                "column_name":"Post Date"
+            },
+            {
+                "path": "{Effective Date}",
+                "type": "date",
+                "column_name":"Effective Date"
+            },
+            {
+                "path": "{Reference #}",
+                "type": "text",
+                "column_name":"Reference #"
+            },
+            {
+                "path": "{Description}",
+                "type": "text",
+                "column_name":"Description"
+            },
+            {
+                "path": "{Advances}",
+                "type": "numeric",
+                "column_name":"Advances"
+            },
+            {
+                "path": "{Adjustments}",
+                "type": "numeric",
+                "column_name":"Adjustments"
+            },
+            {
+                "path": "{Payments}",
+                "type": "numeric",
+                "column_name":"Payments"
+            },
+            {
+                "path": "{Loan Balance}",
+                "type": "numeric",
+                "column_name":"Loan Balance"
+            }
+        ]
+    }
+}
