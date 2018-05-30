@@ -1,1 +1,1 @@
-curl -v -F upload=@//mnt/c/Users/fleet/Downloads/dcard.csv http://localhost:81/import?srce=dcard
+curl -v -F upload=@//mnt/c/Users/fleet/Downloads/DFS-Search-20180529.csv http://localhost:81/import?srce=dcard
