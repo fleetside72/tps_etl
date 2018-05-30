@@ -5,36 +5,38 @@
     "constraint": [
         "{Date}"
     ],
-    "schema": [
-        {
-            "key": "Date",
-            "type": "date",
-            "column_name":"Date"
-        },
-        {
-            "key": "Reference Number",
-            "type": "numeric",
-            "column_name":"Reference Number"
-        },
-        {
-            "key": "Payee Name",
-            "type": "text",
-            "column_name":"Payee Name"
-        },
-        {
-            "key": "Memo",
-            "type": "text",
-            "column_name":"Memo"
-        },
-        {
-            "key": "Amount",
-            "type": "text",
-            "column_name":"Amount"
-        },
-        {
-            "key": "Category Name",
-            "type": "text",
-            "column_name":"Cateogry Name"
-        }
-    ]
+    "schemas": {
+        "default": [
+            {
+                "path": "Date",
+                "type": "date",
+                "column_name": "Date"
+            },
+            {
+                "path": "Reference Number",
+                "type": "numeric",
+                "column_name": "Reference Number"
+            },
+            {
+                "path": "Payee Name",
+                "type": "text",
+                "column_name": "Payee Name"
+            },
+            {
+                "path": "Memo",
+                "type": "text",
+                "column_name": "Memo"
+            },
+            {
+                "path": "Amount",
+                "type": "text",
+                "column_name": "Amount"
+            },
+            {
+                "path": "Category Name",
+                "type": "text",
+                "column_name": "Cateogry Name"
+            }
+        ]
+    }
 }
