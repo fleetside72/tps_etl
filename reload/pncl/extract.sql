@@ -4,7 +4,7 @@ COPY
 (
 SELECT
 	r."Schedule#"
-	,to_char(r."PostDate",'mm/dd/yyyy') "Post Date"
+	,to_char(r."PostDate",'mm/dd/yyyy') "PostDate"
 	,r."Assn#"
 	,r."Coll#"
 	,COALESCE(r."AdvanceRate",0) "AdvanceRate"
