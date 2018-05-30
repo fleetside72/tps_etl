@@ -20,7 +20,7 @@ BEGIN
             --map name
             ,_defn->>'name'
             --map definition
-            ,_defn
+            ,_defn->'regex'
             --map aggregation sequence
             ,(_defn->>'sequence')::INTEGER
             --history definition
@@ -31,7 +31,7 @@ BEGIN
         ON CONFLICT ON CONSTRAINT map_rm_pk DO UPDATE SET
             srce = _defn->>'srce'
             ,target = _defn->>'name'
-            ,regex = _defn
+            ,regex = _defn->'regex'
             ,seq = (_defn->>'sequence')::INTEGER
             ,hist = 
                     --the new definition going to position -0-
