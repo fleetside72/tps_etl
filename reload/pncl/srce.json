@@ -15,8 +15,8 @@
             },
             {
                 "type": "date",
-                "column_name": "PostDate",
-                "path": "{PostDate}"
+                "column_name": "Post Date",
+                "path": "{Post Date}"
             },
             {
                 "type": "text",

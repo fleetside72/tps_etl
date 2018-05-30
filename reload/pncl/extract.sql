@@ -7,19 +7,20 @@ SELECT
 	,to_char(r."PostDate",'mm/dd/yyyy') "Post Date"
 	,r."Assn#"
 	,r."Coll#"
-	,r."AdvanceRate"
-	,r."Sales"
-	,r."Credits & Adjustments"
-	,r."Gross Collections"
-	,r."CollateralBalance"
-	,r."MaxEligible"
-	,r."Ineligible Amount"
-	,r."Reserve Amount"
+	,COALESCE(r."AdvanceRate",0) "AdvanceRate"
+	,COALESCE(r."Sales",0) "Sales"
+	,COALESCE(r."Credits & Adjustments",0) "Credits & Adjustments"
+	,COALESCE(r."Gross Collections",0) "Gross Collections"
+	,COALESCE(r."CollateralBalance",0) "CollateralBalance"
+	,COALESCE(r."MaxEligible",0) "MaxEligible"
+	,COALESCE(r."Ineligible Amount",0) "Ineligible Amount"
+	,COALESCE(r."Reserve Amount",0) "Reserve Amount"
 FROM
 	tps.trans
 	JOIN LATERAL jsonb_populate_record(NULL::tps.pncl, rec) r ON TRUE
 WHERE
 	srce = 'PNCL'
+    --and case when rec->>'Credits & Adjustments' is null then 'null' else '' end <> 'null'
 )
 TO 'C:\users\ptrowbridge\downloads\pncl.csv' WITH (format csv, header TRUE)
 
