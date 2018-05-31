@@ -1,6 +1,0 @@
-{
-    "constraint": [
-        "{doc,origin_addresses}",
-        "{doc,destination_addresses}"
-    ]
-}
