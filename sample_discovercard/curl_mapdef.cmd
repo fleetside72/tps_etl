@@ -1,1 +1,0 @@
-curl -H "Content-Type: application/json" -X POST -d@./mapdef.json http://localhost:81/mapdef_set
