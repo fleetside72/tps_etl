@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS tps.build_srce_view_sql(text, text);
 CREATE OR REPLACE FUNCTION tps.build_srce_view_sql(_srce text, _schema text) RETURNS TEXT
 AS
 $f$
