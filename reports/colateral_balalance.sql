@@ -10,10 +10,10 @@ SELECT
 FROM
     tpsv.pncl_default r
 WHERE
-    --AND rec @> '{"Schedule#":"01AR"}'
-    --AND rec @> '{"Schedule#":"02IN Raw Material"}'
-    "Schedule#" = '03IN Finished Goods'
-    
+    "Schedule#" = '01AR'
+    --"Schedule#" = '02IN Raw Material'
+    --"Schedule#" = '03IN Finished Goods'
 ORDER BY 
     "Schedule#" asc
     ,r."PostDate" asc
+    ,id
