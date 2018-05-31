@@ -1,0 +1,139 @@
+[
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "65"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "SLS"
+        }
+    },
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "59"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "SEB"
+        }
+    },
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "93"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "MDF"
+        }
+    },
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "93"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "ELY"
+        }
+    },
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "93"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "TWN"
+        }
+    },
+    {
+        "map": "Extract month and code",
+        "mapped": {
+            "trial_bal": "88"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "loc_code_rx": "SPK"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "PRINCIPAL LIFE P"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "4.Liab",
+            "acct_type_code": "40P"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "PRINCIPAL LIFE P"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "4.Liab",
+            "acct_type_code": "CUF"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "PRINCIPAL LIFE P"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "4.Liab",
+            "acct_type_code": "K4L"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "PRINCIPAL LIFE P"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "5.Liab",
+            "acct_type_code": "40P"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "PRINCIPAL LIFE P"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "5.Liab",
+            "acct_type_code": "CUF"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "Basic NEO"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "4.Liab",
+            "acct_type_code": "FSA"
+        }
+    },
+    {
+        "map": "SUBSEQUENT PAYOUT",
+        "mapped": {
+            "third_party": "Basic NEO"
+        },
+        "source": "PAYCOM",
+        "ret_val": {
+            "gl_group": "4.Liab",
+            "acct_type_code": "FSD"
+        }
+    }
+]

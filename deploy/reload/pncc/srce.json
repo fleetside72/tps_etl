@@ -1,12 +1,7 @@
-SELECT
-    *
-FROM
-    tps.srce_set(
-        $$
-            {
+{
     "name": "PNCC",
-    "type": "csv",
-    "descr": "PNC Cash Accounts",
+    "source": "client_file",
+    "loading_function": "csv",
     "constraint": [
         "{AsOfDate}"
     ],
@@ -20,7 +15,7 @@ FROM
             {
                 "path": "{BankId}",
                 "type": "text",
-                "column_name": "BankID"
+                "column_name": "BankId"
             },
             {
                 "path": "{AccountNumber}",
@@ -58,17 +53,15 @@ FROM
                 "column_name": "Amount"
             },
             {
-                "path": "{Description}",
+                "path":"{Description}",
                 "type": "text",
                 "column_name": "Description"
             },
             {
                 "path": "{AdditionalRemittance}",
                 "type": "text",
-                "column_name": "CurrencyAdditionalRemittance"
+                "column_name": "AdditionalRemittance"
             }
         ]
     }
 }
-        $$::jsonb
-    )

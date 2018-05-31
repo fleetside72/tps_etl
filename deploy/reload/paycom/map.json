@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Extract month and code",
+        "srce": "PAYCOM",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{check_date}",
+                    "map": "n",
+                    "flag": "",
+                    "field": "check_month",
+                    "regex": "(\\d{4})-(\\d{2})-\\d{2}",
+                    "retain": "y"
+                },
+                {
+                    "key": "{loc_code}",
+                    "map": "y",
+                    "flag": "",
+                    "field": "loc_code_rx",
+                    "regex": ".*",
+                    "retain": "n"
+                }
+            ],
+            "name": "Paycom",
+            "where": [
+                {}
+            ],
+            "function": "extract",
+            "description": "extract month and code"
+        },
+        "sequence": 1
+    },
+    {
+        "name": "SUBSEQUENT PAYOUT",
+        "srce": "PAYCOM",
+        "regex": {
+            "defn": [
+                {
+                    "key": "{gl_group}",
+                    "map": "y",
+                    "flag": "",
+                    "field": "gl_group",
+                    "regex": ".*",
+                    "retain": "n"
+                },
+                {
+                    "key": "{acct_type_code}",
+                    "map": "y",
+                    "flag": "",
+                    "field": "acct_type_code",
+                    "regex": ".*",
+                    "retain": "n"
+                }
+            ],
+            "name": "Paycom",
+            "where": [
+                {}
+            ],
+            "function": "extract",
+            "description": "map payroll code and account group to subsequent payout"
+        },
+        "sequence": 2
+    }
+]

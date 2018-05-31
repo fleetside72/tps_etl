@@ -1,0 +1,42 @@
+{
+    "name": "hunt",
+    "source": "client_file",
+    "loading_function": "csv",
+    "constraint": [
+        "{Date}"
+    ],
+    "schemas": {
+        "default": [
+            {
+                "path": "{Date}",
+                "type": "date",
+                "column_name": "Date"
+            },
+            {
+                "path": "{Reference Number}",
+                "type": "numeric",
+                "column_name": "Reference Number"
+            },
+            {
+                "path": "{Payee Name}",
+                "type": "text",
+                "column_name": "Payee Name"
+            },
+            {
+                "path": "{Memo}",
+                "type": "text",
+                "column_name": "Memo"
+            },
+            {
+                "path": "{Amount}",
+                "type": "numeric",
+                "column_name": "Amount"
+            },
+            {
+                "path": "{Category Name}",
+                "type": "text",
+                "column_name": "Cateogry Name"
+            }
+        ]
+    }
+}

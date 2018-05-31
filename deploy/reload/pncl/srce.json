@@ -1,0 +1,73 @@
+{
+    "constraint": [
+        "{PostDate}",
+        "{Schedule#}"
+    ],
+    "source": "client_file",
+    "loading_function": "csv",
+    "name": "PNCL",
+    "schemas": {
+        "default": [
+            {
+                "path": "{Schedule#}",
+                "type": "text",
+                "column_name": "Schedule#"
+            },
+            {
+                "type": "date",
+                "column_name": "PostDate",
+                "path": "{PostDate}"
+            },
+            {
+                "type": "text",
+                "column_name": "Assn#",
+                "path": "{Assn#}"
+            },
+            {
+                "type": "text",
+                "column_name": "Coll#",
+                "path": "{Coll#}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "AdvanceRate",
+                "path": "{AdvanceRate}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "Sales",
+                "path": "{Sales}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "Credits & Adjustments",
+                "path": "{Credits & Adjustments}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "Gross Collections",
+                "path": "{Gross Collections}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "CollateralBalance",
+                "path": "{CollateralBalance}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "MaxEligible",
+                "path": "{MaxEligible}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "Ineligible Amount",
+                "path": "{Ineligible Amount}"
+            },
+            {
+                "type": "numeric",
+                "column_name": "Reserve Amount",
+                "path": "{Reserve Amount}"
+            }
+        ]
+    }
+}
