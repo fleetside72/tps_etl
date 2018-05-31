@@ -1,0 +1,148 @@
+{
+    "name": "WMPD",
+    "source": "client_file",
+    "loading_function": "csv",
+    "constraint": [
+        "{Pay Dt}",
+        "{Carrier}"
+    ],
+    "schemas": {
+        "default": [
+            {
+                "path": "{Carrier}",
+                "type": "text",
+                "column_name": "Carrier"
+            },
+            {
+                "path": "{SCAC}",
+                "type": "text",
+                "column_name": "SCAC"
+            },
+            {
+                "path": "{Mode}",
+                "type": "text",
+                "column_name": "Mode"
+            },
+            {
+                "path": "{Pro #}",
+                "type": "text",
+                "column_name": "Pro #"
+            },
+            {
+                "path": "{B/L}",
+                "type": "text",
+                "column_name": "B/L"
+            },
+            {
+                "path": "{Pd Amt}",
+                "type": "numeric",
+                "column_name": "Pd Amt"
+            },
+            {
+                "path": "{Loc#}",
+                "type": "text",
+                "column_name": "Loc#"
+            },
+            {
+                "path": "{Pcs}",
+                "type": "numeric",
+                "column_name": "Pcs"
+            },
+            {
+                "path": "{Wgt}",
+                "type": "numeric",
+                "column_name": "Wgt"
+            },
+            {
+                "path": "{Chk#}",
+                "type": "numeric",
+                "column_name": "Chk#"
+            },
+            {
+                "path": "{Pay Dt}",
+                "type": "date",
+                "column_name": "Pay Dt"
+            },
+            {
+                "path": "{Acct #}",
+                "type": "text",
+                "column_name": "Acct #"
+            },
+            {
+                "path": "{I/O}",
+                "type": "text",
+                "column_name": "I/O"
+            },
+            {
+                "path": "{Sh Nm}",
+                "type": "text",
+                "column_name": "Sh Nm"
+            },
+            {
+                "path": "{Sh City}",
+                "type": "text",
+                "column_name": "Sh City"
+            },
+            {
+                "path": "{Sh St}",
+                "type": "text",
+                "column_name": "Sh St"
+            },
+            {
+                "path": "{Sh Zip}",
+                "type": "text",
+                "column_name": "Sh Zip"
+            },
+            {
+                "path": "{Cons Nm}",
+                "type": "text",
+                "column_name": "Cons Nm"
+            },
+            {
+                "path": "{D City }",
+                "type": "text",
+                "column_name": "D City "
+            },
+            {
+                "path": "{D St}",
+                "type": "text",
+                "column_name": "D St"
+            },
+            {
+                "path": "{D Zip}",
+                "type": "text",
+                "column_name": "D Zip"
+            },
+            {
+                "path": "{Sh Dt}",
+                "type": "date",
+                "column_name": "Sh Dt"
+            },
+            {
+                "path": "{Inv Dt}",
+                "type": "date",
+                "column_name": "Inv Dt"
+            },
+            {
+                "path": "{Customs Entry#}",
+                "type": "text",
+                "column_name": "Customs Entry#"
+            },
+            {
+                "path": "{Miles}",
+                "type": "numeric",
+                "column_name": "Miles"
+            },
+            {
+                "path": "{Frt Class}",
+                "type": "text",
+                "column_name": "Frt Class"
+            },
+            {
+                "path": "{Master B/L}",
+                "type": "text",
+                "column_name": "Master B/L"
+            }
+        ]
+    }
+}
