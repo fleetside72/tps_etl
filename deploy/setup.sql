@@ -168,7 +168,35 @@ DECLARE
     _MESSAGE_TEXT text;
     _PG_EXCEPTION_DETAIL text;
     _PG_EXCEPTION_HINT text;
+    _rebuild BOOLEAN;
 BEGIN
+
+    ---------test if anythign is changing--------------------------------------------------------------------------------------------
+
+    IF _defn = (SELECT defn FROM tps.srce WHERE srce = _defn->>'name') THEN
+         _message:= 
+        (
+            $$
+                {
+                "status":"complete",
+                "message":"source was not different no action taken"
+                }
+            $$::jsonb
+        );
+        RETURN _message;
+    END IF;
+
+    ---------if the constraint definition is changing, rebuild for existing records---------------------------------------------------
+
+    SELECT 
+        NOT (_defn->'constraint' = (SELECT defn->'constraint' FROM tps.srce WHERE srce = _defn->>'name'))
+    INTO
+        _rebuild;
+
+    RAISE NOTICE '%',_rebuild::text;
+
+    ---------do merge-----------------------------------------------------------------------------------------------------------------
+
     INSERT INTO
         tps.srce (srce, defn, hist)
     SELECT
@@ -196,8 +224,53 @@ BEGIN
                         ,'{0,effective,1}'::text[]
                         ,to_jsonb(CURRENT_TIMESTAMP)
                     );
-    
-    _message:= 
+    --rebuild constraint key if necessary---------------------------------------------------------------------------------------
+
+    IF _rebuild THEN
+        WITH
+        rebuild AS (
+            SELECT
+                j.srce
+                ,j.rec
+                ,j.id
+                --aggregate back to the record since multiple paths may be listed in the constraint
+                ,tps.jsonb_concat_obj(
+                    jsonb_build_object(
+                        --the new json key is the path itself
+                        cons.path->>0
+                        ,j.rec#>((cons.path->>0)::text[])
+                    ) 
+                ) json_key
+            FROM
+                tps.trans j
+                INNER JOIN tps.srce s ON
+                    s.srce = j.srce
+                JOIN LATERAL jsonb_array_elements(s.defn->'constraint') WITH ORDINALITY cons(path, seq)  ON TRUE
+            WHERE
+                s.srce = _defn->>'name'
+            GROUP BY
+                j.rec
+                ,j.id
+        )
+        UPDATE
+            tps.trans t
+        SET
+            ic = r.json_key
+        FROM
+            rebuild r
+        WHERE
+            t.id = r.id;
+         _message:= 
+        (
+            $$
+                {
+                "status":"complete",
+                "message":"source set and constraint rebuilt on existing records"
+                }
+            $$::jsonb
+        );
+    ELSE
+        _message:= 
         (
             $$
                 {
@@ -206,7 +279,11 @@ BEGIN
                 }
             $$::jsonb
         );
+    END IF;
+
     RETURN _message;
+
+    
 
     EXCEPTION WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS 
@@ -225,7 +302,7 @@ BEGIN
     RETURN _message;
 END;
 $f$
-LANGUAGE plpgsql;
+LANGUAGE plpgsql
 
 -----generate sql to create select based on schema
 DROP FUNCTION IF EXISTS tps.build_srce_view_sql(text, text);
