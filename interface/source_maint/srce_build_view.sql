@@ -12,7 +12,7 @@ BEGIN
 	_path:= ARRAY['schemas',_schema]::text[];
 	--_srce:= 'dcard';
 SELECT
-	'DROP VIEW IF EXISTS tpsv.'||_srce||'_'||_path[2]||'; CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT id, logid, '||string_agg('(allj#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''';'
+	'DROP VIEW IF EXISTS tpsv.'||_srce||'_'||_path[2]||'; CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT id, logid, allj, '||string_agg('(allj#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''';'
 INTO	
 	_sql
 FROM
