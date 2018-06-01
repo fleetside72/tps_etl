@@ -361,7 +361,7 @@ BEGIN
             --map name
             ,ae.r->>'name'
             --map definition
-            ,ae.r->'regex'
+            ,ae.r
             --map aggregation sequence
             ,(ae.r->>'sequence')::INTEGER
             --history definition
