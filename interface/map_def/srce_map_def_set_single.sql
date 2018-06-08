@@ -19,7 +19,7 @@ BEGIN
             $$
                 {
                 "status":"complete",
-                "message":"source was not different no action taken"
+                "message":"map was not different no action taken"
                 }
             $$::jsonb
         );
@@ -69,14 +69,15 @@ BEGIN
     INTO
         _message
     FROM
-        tps.srce_map_overwrite as X(message)
+        tps.srce_map_overwrite as X(message);
 
     EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS 
             _MESSAGE_TEXT = MESSAGE_TEXT,
             _PG_EXCEPTION_DETAIL = PG_EXCEPTION_DETAIL,
             _PG_EXCEPTION_HINT = PG_EXCEPTION_HINT;
-        _message:= 
+
+    _message:= 
         ($$
             {
                 "status":"fail",
@@ -85,7 +86,7 @@ BEGIN
         $$::jsonb)
         ||jsonb_build_object('message_text',_MESSAGE_TEXT)
         ||jsonb_build_object('pg_exception_detail',_PG_EXCEPTION_DETAIL);
-        return _message;
+    return _message;
 
 
 
