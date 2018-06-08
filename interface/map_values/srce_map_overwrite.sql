@@ -18,7 +18,7 @@ BEGIN
         t.rec,
         m.target,
         m.seq,
-        regex->>'function' regex_function,
+        regex->'regex'->>'function' regex_function,
         e.v ->> 'field' result_key_name,
         e.v ->> 'key' target_json_path,
         e.v ->> 'flag' regex_options_flag,
@@ -37,7 +37,7 @@ BEGIN
         END map_key,
         CASE e.v->>'map'
             WHEN 'y' THEN
-                CASE regex->>'function'
+                CASE regex->'regex'->>'function'
                     WHEN 'extract' THEN
                         CASE WHEN array_upper(mt.mt,1)=1 
                             THEN to_json(mt.mt[1])
@@ -59,7 +59,7 @@ BEGIN
         END retain_key,
         CASE e.v->>'retain'
             WHEN 'y' THEN
-                CASE regex->>'function'
+                CASE regex->'regex'->>'function'
                     WHEN 'extract' THEN
                         CASE WHEN array_upper(mt.mt,1)=1 
                             THEN to_json(trim(mt.mt[1]))
@@ -75,15 +75,15 @@ BEGIN
         END retain_val
     FROM 
         tps.map_rm m
-        LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
+        LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'where') w(v) ON TRUE
         INNER JOIN tps.trans t ON 
             t.srce = m.srce AND
             t.rec @> w.v
-        LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
+        LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'defn') WITH ORDINALITY e(v, rn) ON true
         LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
-            m.regex->>'function' = 'extract'
+            m.regex->'regex'->>'function' = 'extract'
         LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
-            m.regex->>'function' = 'replace'
+            m.regex->'regex'->>'function' = 'replace'
     WHERE
         --t.allj IS NULL
         t.srce = _srce

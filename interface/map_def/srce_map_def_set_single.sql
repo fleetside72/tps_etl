@@ -4,7 +4,6 @@ $f$
 
 DECLARE
     _message jsonb;
-    _rebuild boolean;
     _MESSAGE_TEXT text;
     _PG_EXCEPTION_DETAIL text;
     _PG_EXCEPTION_HINT text;
@@ -13,7 +12,7 @@ BEGIN
 
     ---------test if anythign is changing--------------------------------------------------------------------------------------------
 
-    IF _defn = (SELECT regex FROM tps.map_rm WHERE srce = _defn->>'name') THEN
+    IF _defn->'regex' = (SELECT regex->'regex' FROM tps.map_rm WHERE srce = _defn->>'srce' and target = _defn->>'name') THEN
          _message:= 
         (
             $$
@@ -65,11 +64,13 @@ BEGIN
     --------------if rebuild was flag call the rebuild--------------------------------------------------------------------------------
 
     SELECT
-        x.message
+        x.message||'{"step":"overwrite maps in tps.trans"}'::jsonb
     INTO
         _message
     FROM
-        tps.srce_map_overwrite as X(message);
+        tps.srce_map_overwrite(_defn->>'srce') as X(message);
+
+    return _message;
 
     EXCEPTION WHEN OTHERS THEN
     GET STACKED DIAGNOSTICS 
