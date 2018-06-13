@@ -697,90 +697,97 @@ $f$;
 
 -------------------create trigger to map imported items------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
+CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER 
+AS 
+$f$
+    DECLARE
+        _cnt INTEGER;
+
     BEGIN
         IF (TG_OP = 'INSERT') THEN
+
+
             WITH
             --------------------apply regex operations to transactions-----------------------------------------------------------------------------------
 
             rx AS (
-            SELECT 
-                t.srce,
-                t.id,
-                t.rec,
-                m.target,
-                m.seq,
-                regex->>'function' regex_function,
-                e.v ->> 'field' result_key_name,
-                e.v ->> 'key' target_json_path,
-                e.v ->> 'flag' regex_options_flag,
-                e.v->>'map' map_intention,
-                e.v->>'retain' retain_result,
-                e.v->>'regex' regex_expression,
-                e.rn target_item_number,
-                COALESCE(mt.rn,rp.rn,1) result_number,
-                mt.mt rx_match,
-                rp.rp rx_replace,
-                CASE e.v->>'map'
-                    WHEN 'y' THEN
-                        e.v->>'field'
-                    ELSE
-                        null
-                END map_key,
-                CASE e.v->>'map'
-                    WHEN 'y' THEN
-                        CASE regex->>'function'
-                            WHEN 'extract' THEN
-                                CASE WHEN array_upper(mt.mt,1)=1 
-                                    THEN to_json(mt.mt[1])
-                                    ELSE array_to_json(mt.mt)
-                                END::jsonb
-                            WHEN 'replace' THEN
-                                to_jsonb(rp.rp)
-                            ELSE
-                                '{}'::jsonb
-                        END
-                    ELSE
-                        NULL
-                END map_val,
-                CASE e.v->>'retain'
-                    WHEN 'y' THEN
-                        e.v->>'field'
-                    ELSE
-                        NULL
-                END retain_key,
-                CASE e.v->>'retain'
-                    WHEN 'y' THEN
-                        CASE regex->>'function'
-                            WHEN 'extract' THEN
-                                CASE WHEN array_upper(mt.mt,1)=1 
-                                    THEN to_json(trim(mt.mt[1]))
-                                    ELSE array_to_json(mt.mt)
-                                END::jsonb
-                            WHEN 'replace' THEN
-                                to_jsonb(rtrim(rp.rp))
-                            ELSE
-                                '{}'::jsonb
-                        END
-                    ELSE
-                        NULL
-                END retain_val
-            FROM 
-                tps.map_rm m
-                LEFT JOIN LATERAL jsonb_array_elements(m.regex->'where') w(v) ON TRUE
-                INNER JOIN new_table t ON 
-                    t.srce = m.srce AND
-                    t.rec @> w.v
-                LEFT JOIN LATERAL jsonb_array_elements(m.regex->'defn') WITH ORDINALITY e(v, rn) ON true
-                LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
-                    m.regex->>'function' = 'extract'
-                LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
-                    m.regex->>'function' = 'replace'
-            ORDER BY 
-                t.id DESC,
-                m.target,
-                e.rn,
-                COALESCE(mt.rn,rp.rn,1)
+                SELECT 
+                    t.srce,
+                    t.id,
+                    t.rec,
+                    m.target,
+                    m.seq,
+                    regex->'regex'->>'function' regex_function,
+                    e.v ->> 'field' result_key_name,
+                    e.v ->> 'key' target_json_path,
+                    e.v ->> 'flag' regex_options_flag,
+                    e.v->>'map' map_intention,
+                    e.v->>'retain' retain_result,
+                    e.v->>'regex' regex_expression,
+                    e.rn target_item_number,
+                    COALESCE(mt.rn,rp.rn,1) result_number,
+                    mt.mt rx_match,
+                    rp.rp rx_replace,
+                    CASE e.v->>'map'
+                        WHEN 'y' THEN
+                            e.v->>'field'
+                        ELSE
+                            null
+                    END map_key,
+                    CASE e.v->>'map'
+                        WHEN 'y' THEN
+                            CASE regex->'regex'->>'function'
+                                WHEN 'extract' THEN
+                                    CASE WHEN array_upper(mt.mt,1)=1 
+                                        THEN to_json(mt.mt[1])
+                                        ELSE array_to_json(mt.mt)
+                                    END::jsonb
+                                WHEN 'replace' THEN
+                                    to_jsonb(rp.rp)
+                                ELSE
+                                    '{}'::jsonb
+                            END
+                        ELSE
+                            NULL
+                    END map_val,
+                    CASE e.v->>'retain'
+                        WHEN 'y' THEN
+                            e.v->>'field'
+                        ELSE
+                            NULL
+                    END retain_key,
+                    CASE e.v->>'retain'
+                        WHEN 'y' THEN
+                            CASE regex->'regex'->>'function'
+                                WHEN 'extract' THEN
+                                    CASE WHEN array_upper(mt.mt,1)=1 
+                                        THEN to_json(trim(mt.mt[1]))
+                                        ELSE array_to_json(mt.mt)
+                                    END::jsonb
+                                WHEN 'replace' THEN
+                                    to_jsonb(rtrim(rp.rp))
+                                ELSE
+                                    '{}'::jsonb
+                            END
+                        ELSE
+                            NULL
+                    END retain_val
+                FROM 
+                    tps.map_rm m
+                    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'where') w(v) ON TRUE
+                    INNER JOIN new_table t ON 
+                        t.srce = m.srce AND
+                        t.rec @> w.v
+                    LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'defn') WITH ORDINALITY e(v, rn) ON true
+                    LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
+                        m.regex->'regex'->>'function' = 'extract'
+                    LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
+                        m.regex->'regex'->>'function' = 'replace'
+                ORDER BY 
+                    t.id DESC,
+                    m.target,
+                    e.rn,
+                    COALESCE(mt.rn,rp.rn,1)
             )
 
             --SELECT count(*) FROM rx LIMIT 100
@@ -903,7 +910,7 @@ CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
             )
 
             --SELECT agg_to_id.srce, agg_to_id.id, jsonb_pretty(agg_to_id.retain_val) , jsonb_pretty(agg_to_id.map) FROM agg_to_id ORDER BY id desc LIMIT 100
-
+            
             --create a complete list of all new inserts assuming some do not have maps (left join)
             ,join_all AS (
                 SELECT
@@ -930,6 +937,7 @@ CREATE OR REPLACE FUNCTION tps.trans_insert_map() RETURNS TRIGGER AS $f$
                join_all a
             WHERE
                 t.id = a.id;
+                
 
         END IF;
         RETURN NULL;

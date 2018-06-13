@@ -17,7 +17,7 @@
             "where": [
                 {}
             ],
-            "function": "replace",
+            "function": "extract",
             "description": "pull first 20 characters from description for mapping"
         },
         "sequence": 1
