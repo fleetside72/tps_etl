@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION tps.srce_map_def_set_single(_defn jsonb) RETURNS jsonb
+CREATE OR REPLACE FUNCTION tps.srce_map_def_set_single(_defn jsonb, _rebuild BOOLEAN) RETURNS jsonb
 AS
 $f$
 
@@ -63,12 +63,14 @@ BEGIN
 
     --------------if rebuild was flag call the rebuild--------------------------------------------------------------------------------
 
-    SELECT
-        x.message||'{"step":"overwrite maps in tps.trans"}'::jsonb
-    INTO
-        _message
-    FROM
-        tps.srce_map_overwrite(_defn->>'srce') as X(message);
+    IF _rebuild THEN
+        SELECT
+            x.message||'{"step":"overwrite maps in tps.trans"}'::jsonb
+        INTO
+            _message
+        FROM
+            tps.srce_map_overwrite(_defn->>'srce') as X(message);
+    END IF;
 
     return _message;
 
