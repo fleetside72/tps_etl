@@ -311,25 +311,26 @@ AS
 $f$
 DECLARE	
 	--_schema text;
-	_path text[];
 	--_srce text;
 	_sql text;
 BEGIN
     --_schema:= 'default';
-	_path:= ARRAY['schemas',_schema]::text[];
 	--_srce:= 'dcard';
 SELECT
-	'DROP VIEW IF EXISTS tpsv.'||_srce||'_'||_path[2]||'; CREATE VIEW tpsv.'||_srce||'_'||_path[2]||' AS SELECT id, logid, '||string_agg('(allj#>>'''||r.PATH::text||''')::'||r.type||' AS "'||r.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||_srce||''';'
-INTO	
+   'DROP VIEW IF EXISTS tpsv.'||s.srce||'_'||(list.e->>'name')||'; CREATE VIEW tpsv.'||s.srce||'_'||(list.e->>'name')||' AS SELECT id, logid, allj, '||string_agg('(allj#>>'''||rec.PATH::text||''')::'||rec.type||' AS "'||rec.column_name||'"',', ')||' FROM tps.trans WHERE srce = '''||s.srce||''';'
+INTO
 	_sql
 FROM
-	tps.srce
-	JOIN LATERAL jsonb_array_elements(defn#>_path) ae(v) ON TRUE
-	JOIN LATERAL jsonb_to_record (ae.v) AS r(PATH text[], "type" text, column_name text) ON TRUE 
+    tps.srce s
+    JOIN LATERAL jsonb_array_elements(s.defn->'schemas') list (e) ON TRUE
+    JOIN LATERAL jsonb_array_elements(list.e->'columns') as cols(e) ON TRUE
+    JOIN LATERAL jsonb_to_record (cols.e) AS rec( PATH text[], "type" text, column_name text) ON TRUE 
 WHERE
-	srce = _srce
+    srce = _srce
+    AND list.e->>'name' = _schema
 GROUP BY
-	srce.srce;
+    s.srce
+    ,list.e;
 
 RETURN _sql;
 RAISE NOTICE '%',_sql;
