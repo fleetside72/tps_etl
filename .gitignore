@@ -2,3 +2,5 @@
 .dbeaver-data-sources.xml
 .project
 Scripts/
+*.log
+*.swp
