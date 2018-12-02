@@ -74,14 +74,20 @@ $f$
                             NULL
                     END retain_val
                 FROM 
+                    --------------------------start with all regex maps------------------------------------------------------------------------------------
                     tps.map_rm m
+                    --------------------------isolate matching basis to limit map to only look at certain json---------------------------------------------
                     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'where') w(v) ON TRUE
+                    --------------------------join to main transaction table but only certain key/values are included--------------------------------------
                     INNER JOIN new_table t ON 
                         t.srce = m.srce AND
                         t.rec @> w.v
+                    --------------------------break out array of regluar expressions in the map------------------------------------------------------------
                     LEFT JOIN LATERAL jsonb_array_elements(m.regex->'regex'->'defn') WITH ORDINALITY e(v, rn) ON true
+                    --------------------------each regex references a path to the target value, extract the target from the reference and do regex---------
                     LEFT JOIN LATERAL regexp_matches(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text,COALESCE(e.v ->> 'flag','')) WITH ORDINALITY mt(mt, rn) ON
                         m.regex->'regex'->>'function' = 'extract'
+                    --------------------------same as above but for a replacement type function------------------------------------------------------------
                     LEFT JOIN LATERAL regexp_replace(t.rec #>> ((e.v ->> 'key')::text[]), e.v ->> 'regex'::text, e.v ->> 'replace'::text,e.v ->> 'flag') WITH ORDINALITY rp(rp, rn) ON
                         m.regex->'regex'->>'function' = 'replace'
                 ORDER BY 
