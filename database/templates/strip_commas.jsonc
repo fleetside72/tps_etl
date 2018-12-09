@@ -1,0 +1,24 @@
+{
+    "name": "Strip Amount Commas",  //the name here currently also serves as the primary key in the database
+    "srce": "PNCC",                 //name of the target source
+    "sequence": 1 ,                 //only for edge cases where the instructions returns two keys of the same name, this determines priority. pretty much 1.
+    "regex": {                      //instruction set
+        "where": [                  //only apply this regex to these specified key value pairs, if none then use empty object {}
+            {
+                "example_key":"example_value"
+            }
+        ],
+        "function": "replace",      //even though there is an array of definitions they all have to operate under the same premise(extract or replace)
+        "defn": [                   //there is an array of instructions
+            {
+                "key": "{Amount}",  //key= the path to the json key/value pair to operate on. path woudl be a better term.
+                "map": "n",         //y or n to indicate if the returned value will be used to search a lookup table
+                "flag": "g",        //g indicates find all values, null or empty would be the other option I guess
+                "field": "amount",  //the key name to give the value that comes out of this instruction
+                "regex": ",",       //the reg expression itself
+                "retain": "y",      //flag to indicate if the returned value should be retained and included with the data
+                "replace": ""       //this key is only evaluated if the function is defined as replace
+            }
+        ]
+    }
+}

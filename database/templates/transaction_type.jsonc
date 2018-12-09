@@ -1,0 +1,45 @@
+{
+    "name": "Trans Type",
+    "srce": "PNCC",
+    "regex": {
+        "function": "extract",
+        "defn": [
+            {
+                "key": "{AccountName}",
+                "map": "y",
+                "field": "acctn",
+                "regex": "(.*)",
+                "retain": "n"
+            },
+            {
+                "key": "{Transaction}",
+                "map": "y",
+                "field": "trans",
+                "regex": "(.*)",
+                "retain": "n"
+            },
+            {
+                "key": "{Description}",
+                "map": "y",
+                "field": "ini",
+                "regex": "([\\w].*?)(?=$| -|\\s[0-9].*?|\\s[\\w/]+?:)",
+                "retain": "y"
+            }
+        ],
+        "where": [
+            {}
+        ]
+    },
+    "sequence": 1
+}
+
+/*
+target      |                                                              retval                                                              |                                                                           map
+------------+----------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------- 
+ Trans Type | {"ini": "01346", "acctn": "The HC Operating Company OPERA", "trans": "Miscellaneous Fees"}                                       | {"sign": "-1", "party": "PNC", "ledger": "Manual", "reason": "Bank Fees", "trantype": "Disbursement"}
+ Trans Type | {"ini": "CANADA TAX", "acctn": "The HC Operating Company OPERA", "trans": "Detail Debit Adjustments"}                            | {"sign": "-1", "party": "PNC", "ledger": "Manual", "reason": "Bank Fees", "trantype": "Disbursement"} 
+ Trans Type | {"ini": "ACH DEBIT SETTLEMENT", "acctn": "The HC Operating Company OPERA", "trans": "ACH Debits"}                                | {"sign": "-1", "ledger": "AP - ACH", "trantype": "Disbursement"} 
+ Trans Type | {"ini": "RET DEP ITEM RTM", "acctn": "The HC Operating Company FBO P", "trans": "Deposited Items Returned"}                      | {"sign": "-1", "ledger": "Manual", "reason": "Returned Deposit RTM", "trantype": "Collections"} 
+ Trans Type | {"ini": "RET DEP ITEM STOP", "acctn": "The HC Operating Company FBO P", "trans": "Deposited Items Returned"}                     | {"sign": "-1", "ledger": "Manual", "reason": "Returned Deposit STOP", "trantype": "Collections"} 
+ Trans Type | {"ini": "CREDIT ADJUSTMENT", "acctn": "The HC Operating Company FBO P", "trans": "Detail Credit Adjustments"}                    | {"sign": "1", "ledger": "AR - Collections", "trantype": "Collections"}
+ */
