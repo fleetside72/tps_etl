@@ -22,7 +22,7 @@ BEGIN
         $$
             {
             "status":"complete",
-            "message":"source was moved to the recycle bin which has not been implemented so...hope you're in dev"
+            "message":"source was permanently deleted"
             }
         $$::jsonb
     );
