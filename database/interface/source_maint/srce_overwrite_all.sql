@@ -22,7 +22,7 @@ BEGIN
         ,j.e->>'name' srce
         ,j.e defn
     FROM
-        jsonb_array_elements(_defn) WITH ORDINALITY j(e, rn) ON TRUE
+        jsonb_array_elements(_defn) WITH ORDINALITY j(e, rn)
     )
     --full join
     ,_full AS (
