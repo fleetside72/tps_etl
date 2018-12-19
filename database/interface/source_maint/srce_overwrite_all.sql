@@ -3,7 +3,7 @@ This function takes and array of definition object where "name" object is the pr
 It will force the entire body of sources to match what is received
 */
 DROP FUNCTION IF EXISTS tps.srce_overwrite_all(jsonb);
-CREATE FUNCTION tps.srce_overwrite_all(jsonb) RETURNS jsonb
+CREATE FUNCTION tps.srce_overwrite_all(_defn jsonb) RETURNS jsonb
 AS
 $f$
 DECLARE 
@@ -31,7 +31,7 @@ BEGIN
             ,CASE COALESCE(_set.srce,'DELETE') WHEN 'DELETE' THEN 'DELETE' ELSE 'SET' END actn
             ,COALESCE(_set.defn,_srce.defn) defn
         FROM
-            l
+            tps.srce _srce
             FULL OUTER JOIN _set ON
                 _set.srce = _srce.srce
     )
