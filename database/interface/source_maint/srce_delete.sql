@@ -12,7 +12,7 @@ BEGIN
 
     -------------------------------do delete---------------------------------
 
-    DELETE FROM tps.srce WHERE srce = _defn->>'name'
+    DELETE FROM tps.srce WHERE srce = _defn->>'name';
     --could move this record to a "recycle bin" table for a certain period of time
     --need to handle cascading record deletes
     
