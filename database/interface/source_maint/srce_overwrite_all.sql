@@ -12,17 +12,18 @@ DECLARE
     _PG_EXCEPTION_DETAIL text;
     _PG_EXCEPTION_HINT text;
     _rebuild BOOLEAN;
+    _list text;
 BEGIN
 
     WITH
     --retain the results of the update by srce
     _set AS (
-    SELECT
-        j.rn rn
-        ,j.e->>'name' srce
-        ,j.e defn
-    FROM
-        jsonb_array_elements(_defn) WITH ORDINALITY j(e, rn)
+        SELECT
+            j.rn rn
+            ,j.e->>'name' srce
+            ,j.e defn
+        FROM
+            jsonb_array_elements(_defn) WITH ORDINALITY j(e, rn)
     )
     --full join
     ,_full AS (
@@ -36,28 +37,54 @@ BEGIN
                 _set.srce = _srce.srce
     )
     --call functions from list
-    ,_do AS (
-    SELECT 
-        f.srce
-        ,f.actn
-        ,COALESCE(setd.message, deld.message) message
-    FROM 
-        _full f
-        LEFT JOIN LATERAL tps.srce_set(defn) setd(message) ON f.actn = 'SET'
-        LEFT JOIN LATERAL tps.srce_delete(defn) deld(message) ON f.actn = 'DELETE'
+    ,_do_set AS (
+        SELECT 
+            f.srce
+            ,f.actn
+            ,setd.message
+        FROM 
+            _full f
+            JOIN LATERAL tps.srce_set(defn) setd(message) ON f.actn = 'SET'
+            --dual left joins for functions that touch the same table causes the first left join actions to be undone
+            --LEFT JOIN LATERAL tps.srce_delete(defn) deld(message) ON f.actn = 'DELETE'
+    )
+    ,_do_del AS (
+        SELECT 
+            f.srce
+            ,f.actn
+            ,deld.message
+        FROM 
+            _full f
+            JOIN LATERAL tps.srce_delete(defn) deld(message) ON f.actn = 'DELETE'
     )
     --aggregate all the messages into one message
     ----
     ----    should look at rolling back the whole thing if one of the function returns a fail. stored proc could do this.
     ----
     SELECT
-        jsonb_agg(jsonb_build_object('source',srce,'status',message->>'status','message',message->>'message'))
+        jsonb_agg(m)
     INTO
         _message
     FROM
-        _do;
+        (
+            SELECT
+                jsonb_build_object('source',srce,'status',message->>'status','message',message->>'message') m
+            FROM    
+                _do_set
+            UNION ALL
+            SELECT
+                jsonb_build_object('source',srce,'status',message->>'status','message',message->>'message') m
+            FROM
+                _do_del
+        ) x;
+
+    SELECT string_agg(srce,',') INTO _list FROM tps.srce;
+    RAISE NOTICE 'multi source list: %', _list;
 
     RETURN _message;
+
+    SELECT string_agg(srce,',') INTO _list FROM tps.srce;
+    RAISE NOTICE 'after return: %', _list;
 
     
 
