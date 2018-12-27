@@ -12,6 +12,7 @@ DECLARE
     _PG_EXCEPTION_DETAIL text;
     _PG_EXCEPTION_HINT text;
     _rebuild BOOLEAN;
+    _list text;
 BEGIN
 
     WITH
@@ -40,11 +41,12 @@ BEGIN
     SELECT 
         f.srce
         ,f.actn
-        ,COALESCE(setd.message, deld.message) message
+        ,COALESCE(setd.message, '{"message":"not inserted"}'::jsonb/*deld.message*/) message
     FROM 
         _full f
         LEFT JOIN LATERAL tps.srce_set(defn) setd(message) ON f.actn = 'SET'
-        LEFT JOIN LATERAL tps.srce_delete(defn) deld(message) ON f.actn = 'DELETE'
+        --dual left joins for functions that touch the same table causes the first left join actions to be undone
+        --LEFT JOIN LATERAL tps.srce_delete(defn) deld(message) ON f.actn = 'DELETE'
     )
     --aggregate all the messages into one message
     ----
@@ -57,7 +59,13 @@ BEGIN
     FROM
         _do;
 
+    SELECT string_agg(srce,',') INTO _list FROM tps.srce;
+    RAISE NOTICE 'multi source list: %', _list;
+
     RETURN _message;
+
+    SELECT string_agg(srce,',') INTO _list FROM tps.srce;
+    RAISE NOTICE 'after return: %', _list;
 
     
 
